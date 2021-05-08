@@ -6,8 +6,8 @@ A Docker volume as a ZooKeeper tree volume plugin
 To install just type:
 
 ```bash
-docker plugin smok-serwis/zookeeper-volume
-docker pugin enable smok-serwis/zookeeper-volume
+docker plugin smokserwis/zookeeper-volume
+docker pugin enable smokserwis/zookeeper-volume
 ```
 
 # Defining volumes
@@ -15,14 +15,14 @@ docker pugin enable smok-serwis/zookeeper-volume
 To define a volume just type
 
 ```bash
-docker volume create -d smok-serwis/zookeeper-volume -ohost=192.168.2.237 -opath=/zk-child zookeeper
+docker volume create -d smokserwis/zookeeper-volume -ohost=192.168.2.237 -opath=/zk-child zookeeper
 ```
 
 You can also omit path to use the default root.
 You can specify multiple hosts by using `hosts` option, such as:
 
 ```bash
-docker volume create -d smok-serwis/zookeeper-volume -ohosts=192.168.2.237,192.168.2.238:2000 zookeeper
+docker volume create -d smokserwis/zookeeper-volume -ohosts=192.168.2.237,192.168.2.238:2000 zookeeper
 ```
 
 # Running
@@ -45,6 +45,12 @@ Volume must have at least a single option:
 
 It accepts also a `path` argument, which is the address of the z-node to 
 mount as root.
+
+# Building from source
+
+Just check this repo out on a normal UNIX platform (sorry, only UNIXes supported for the time being)
+and invoke `build.sh`.
+`build.sh` will automatically install and enable the plugin.
 
 # Thanks and credits
 

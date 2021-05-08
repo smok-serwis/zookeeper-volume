@@ -139,6 +139,10 @@ class Volume(Closeable):
                 self.unmount()
             volume_id_assigner.mark_as_free(int(self.volume_id))
 
+    def delete(self) -> None:
+        if os.path.exists(self.path):
+            os.rmdir(self.path)
+
     def to_dict(self) -> dict:
         return {
             'hosts': self.hosts,
