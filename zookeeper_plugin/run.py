@@ -3,8 +3,7 @@ import os
 
 from .app import app
 
-import zookeeper_plugin.volume
-import zookeeper_plugin.handshake
+import zookeeper_plugin.handlers
 import zookeeper_plugin.exceptions
 
 print('Gunicorn started')

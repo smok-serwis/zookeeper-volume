@@ -1,21 +1,25 @@
-import logging
 from flask import request
 from flask_json import as_json
 
 from .app import app
-from .connections import VolumeDatabase
+from .volumes import VolumeDatabase
 from .exceptions import MountException
 
-logger = logging.getLogger(__name__)
+
+@app.route('/Plugin.Activate', methods=['POST'])
+@as_json
+def activate():
+    return {
+        'Implements': ['VolumeDriver']
+    }
 
 
-@app.route('/VolumeDriver.Create')
+@app.route('/VolumeDriver.Create', methods=['POST'])
 @as_json
 def volume_create():
     data = request.get_json()
     name = data['Name']
     options = data.get('Options', {})
-    logger.debug('Volume.create(%s)', data)
     if 'host' not in options:
         return {'Err': 'expected host in options'}, 400
     if 'host' in options:
@@ -33,12 +37,11 @@ def volume_create():
     return {'Err': ''}
 
 
-@app.route('/VolumeDriver.Remove')
+@app.route('/VolumeDriver.Remove', methods=['POST'])
 @as_json
 def volume_remove():
     data = request.get_json()
     name = data['Name']
-    logger.debug('Volume.remove(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -50,12 +53,11 @@ def volume_remove():
     return {'Err': ''}
 
 
-@app.route('/VolumeDriver.Mount')
+@app.route('/VolumeDriver.Mount', methods=['POST'])
 @as_json
 def volume_mount():
     data = request.get_json()
     name = data['Name']
-    logger.debug('Volume.mount(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -71,12 +73,11 @@ def volume_mount():
             'Err': ''}
 
 
-@app.route('/VolumeDriver.Unmount')
+@app.route('/VolumeDriver.Unmount', methods=['POST'])
 @as_json
 def volume_unmount():
     data = request.get_json()
     name = data['Name']
-    logger.debug('Volume.unmount(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -88,7 +89,7 @@ def volume_unmount():
     return {'Err': ''}
 
 
-@app.route('/VolumeDriver.List')
+@app.route('/VolumeDriver.List', methods=['POST'])
 @as_json
 def volumes_list():
     result = []
@@ -100,11 +101,10 @@ def volumes_list():
             'Volumes': result}
 
 
-@app.route('/VolumeDriver.Path')
+@app.route('/VolumeDriver.Path', methods=['POST'])
 @as_json
 def volume_path():
     data = request.get_json()
-    logger.debug('Volume.path(%s)', data)
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -117,12 +117,11 @@ def volume_path():
             'Err': ''}
 
 
-@app.route('/VolumeDriver.Get')
+@app.route('/VolumeDriver.Get', methods=['POST'])
 @as_json
 def volume_get():
     data = request.get_json()
     name = data['Name']
-    logger.debug('Volume.get(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -137,9 +136,7 @@ def volume_get():
     }
 
 
-@app.route('/VolumeDriver.Capabilities')
+@app.route('/VolumeDriver.Capabilities', methods=['POST'])
 @as_json
 def capabilities_get():
-    logger.debug('Volume.capabilities')
-
     return {'Capabilities': {'Scope': 'global'}}
