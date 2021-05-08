@@ -68,9 +68,9 @@ class VolumeDatabase(Monitor):
             return self.volumes[name]
 
     def close(self):
-        while self.connections:
-            key, conn = self.connections.popitem()
-            conn.close()
+        while self.volumes:
+            key, vol = self.volumes.popitem()
+            vol.close()
 
     def sync_to_disk(self) -> None:
         data = [vol.to_dict() for vol in self.get_all_volumes()]
@@ -78,10 +78,8 @@ class VolumeDatabase(Monitor):
 
 
 class Volume(Closeable):
-    hosts = 'name', 'hosts', 'path', 'volume_id', 'process', 'reference_count', 'monitor'
-
     def __init__(self, hosts: tp.Sequence[str], name: str, path: str):
-        Closeable.__init__(self)
+        super().__init__()
         self.monitor = Monitor()
         self.hosts = to_hosts(hosts)
         self.name = name
