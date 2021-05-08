@@ -130,6 +130,9 @@ def volume_path():
 @as_json
 def volume_get():
     data = request.get_json()
+    logger.warning(request)
+    logger.warning(request.data)
+    logger.warning(dir(request))
     name = data['Name']
     zdb = VolumeDatabase()
     try:
