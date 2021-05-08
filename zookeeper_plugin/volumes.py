@@ -18,7 +18,9 @@ from zookeeper_plugin.exceptions import MountException
 def to_hosts(items: tp.Sequence[str]) -> str:
     return ','.join(sorted(items))
 
+
 logger = logging.getLogger(__name__)
+
 
 volume_id_assigner = IDAllocator()
 BASE_PATH = '/mnt/volumes'
@@ -57,9 +59,9 @@ class VolumeDatabase(Monitor):
                    hosts: tp.Optional[tp.Sequence[str]] = None,
                    path: tp.Optional[str] = None):
         if name not in self.volumes:
-            vol = Volume(hosts, name, path)
             if hosts is None or path is None:
                 raise KeyError()
+            vol = Volume(hosts, name, path)
             self.volumes[name] = vol
             return vol
         else:
