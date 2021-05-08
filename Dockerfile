@@ -14,8 +14,6 @@ RUN apt-get update && \
     apt-get install -y libzookeeper-mt2 libfuse2 && \
     apt-get clean
 
-COPY --from=builder /zookeeper-fuse/zookeeperfuse /usr/bin/zookeeperfuse
-
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt && \
     rm -rf /tmp/requirements.txt
@@ -24,4 +22,7 @@ WORKDIR /app
 ADD zookeeper_plugin /app/zookeeper_plugin
 ADD run.sh /run.sh
 RUN chmod ugo+x /run.sh
+
+COPY --from=builder /zookeeper-fuse/zookeeperfuse /usr/bin/zookeeperfuse
+
 CMD ["/run.sh"]
