@@ -106,7 +106,7 @@ class Volume(Closeable):
                                         stderr=subprocess.STDOUT)
         time.sleep(1)
         if not self.alive:
-            raise MountException()
+            raise MountException('process died shortly after startup')
 
     def unmount(self) -> None:
         self.process.terminate()
@@ -142,6 +142,8 @@ class Volume(Closeable):
             volume_id_assigner.mark_as_free(int(self.volume_id))
 
     def delete(self) -> None:
+        if self.reference_count != 0:
+            raise MountException('Volume in use yet')
         if os.path.exists(self.path):
             os.rmdir(self.path)
 

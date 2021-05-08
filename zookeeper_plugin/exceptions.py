@@ -8,7 +8,14 @@ logger = logging.getLogger(__name__)
 
 
 class MountException(Exception):
-    pass
+    def __init__(self, msg):
+        self.msg = msg
+
+
+@app.errorhandler(MountException)
+@as_json
+def handle_mount_exception(e: MountException):
+    return {'Err': e.msg}, 400
 
 
 @app.errorhandler(KeyError)
