@@ -15,8 +15,12 @@ from satella.json import write_json_to_file, read_json_from_file
 from zookeeper_plugin.exceptions import MountException
 
 
-def to_hosts(items: tp.Sequence[str]) -> str:
-    return ','.join(sorted(items))
+def to_hosts(items: tp.Union[tp.Sequence[str]]) -> str:
+    if isinstance(items, (list, tuple)):
+        return ','.join(sorted(items))
+    elif isinstance(items, str):
+        return items
+    raise TypeError('Invalid type for items')
 
 
 logger = logging.getLogger(__name__)
@@ -43,11 +47,11 @@ class VolumeDatabase(Monitor):
     def get_all_volumes(self) -> tp.Iterator[Volume]:
         return self.volumes.values()
 
-    def add_volume(self, vol: Volume):
+    def add_volume(self, vol: Volume) -> None:
         name = vol.name
         self.volumes[name] = vol
 
-    def rm_volume(self, vol: Volume):
+    def rm_volume(self, vol: Volume) -> None:
         vol = self.volumes.pop(vol.name)
         vol.delete()
         vol.close()
@@ -67,7 +71,7 @@ class VolumeDatabase(Monitor):
         else:
             return self.volumes[name]
 
-    def close(self):
+    def close(self) -> None:
         while self.volumes:
             key, vol = self.volumes.popitem()
             vol.close()
@@ -89,11 +93,11 @@ class Volume(Closeable):
         self.process = None
 
     def mount(self):
-        path = self.to_path()
+        path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
         self.process = subprocess.Popen(f'zookeeperfuse {path} -- '
-                                        f'--zooPath {self.path} --zooHosts {self.handler.hosts}')
+                                        f'--zooPath {self.path} --zooHosts {self.hosts}')
         time.sleep(1)
         if not self.alive:
             raise MountException()
@@ -105,26 +109,27 @@ class Volume(Closeable):
             logger.warning(f'Forcibly terminating PID {self.process.pid}')
 
         self.process = None
-        path = self.to_path()
+        path = self.path
         if os.path.exists(path):
             os.rmdir(path)
 
-    def on_mount(self):
+    def on_mount(self) -> None:
         with self.monitor:
             if self.reference_count == 0 and self.process is None:
                 self.mount()
             self.reference_count += 1
 
-    def on_unmount(self):
+    def on_unmount(self) -> None:
         with self.monitor:
             if self.reference_count == 1:
                 self.unmount()
             self.reference_count -= 1
 
-    def to_path(self) -> str:
+    @property
+    def path(self) -> str:
         return os.path.join(BASE_PATH, self.volume_id)
 
-    def close(self):
+    def close(self) -> None:
         if super().close():
             if self.process is not None:
                 self.unmount()

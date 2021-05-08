@@ -24,12 +24,12 @@ def volume_create():
     logger.debug('VolumeDriver.Create(%s)', data)
     name = data['Name']
     options = data.get('Opts', {})
-    if 'host' not in options:
-        return {'Err': 'expected host in options'}, 400
     if 'host' in options:
-        hosts = options['host']
+        hosts = [options['host']]
     elif 'hosts' in options:
         hosts = options['hosts'].split(',')
+    else:
+        return {'Err': 'expected host or hosts in options'}, 400
 
     path = options.get('path', '/')
     zdb = VolumeDatabase()
@@ -75,7 +75,7 @@ def volume_mount():
     except MountException:
         return {'Err': 'Exception on mounting',
                 'Mountpoint': ''}, 500
-    return {'Mountpoint': vol.to_path(),
+    return {'Mountpoint': vol.path,
             'Err': ''}
 
 
@@ -103,7 +103,7 @@ def volumes_list():
     zdb = VolumeDatabase()
     for volume in zdb.get_all_volumes():
         result.append({'Name': volume.name,
-                       'Mountpoint': volume.to_path()})
+                       'Mountpoint': volume.path})
     return {'Err': '',
             'Volumes': result}
 
@@ -121,7 +121,7 @@ def volume_path():
         return {'Err': 'volume does not exist',
                 'Mountpoint': ''}, 404
 
-    return {'Mountpoint': vol.to_path(),
+    return {'Mountpoint': vol.path,
             'Err': ''}
 
 
@@ -140,7 +140,7 @@ def volume_get():
 
     return {'Volume': {
         'Name': vol.name,
-        'Mountpoint': vol.to_path(),
+        'Mountpoint': vol.path,
     }, 'Err': ''
     }
 
