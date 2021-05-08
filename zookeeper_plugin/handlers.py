@@ -1,8 +1,8 @@
 import logging
 from flask import request
-from flask_json import as_json
 
 from .app import app
+from .json import get_json, as_json
 from .volumes import VolumeDatabase
 from .exceptions import MountException
 
@@ -21,7 +21,7 @@ def activate():
 @app.route('/VolumeDriver.Create', methods=['POST'])
 @as_json
 def volume_create():
-    data = request.get_json()
+    data = get_json()
     logger.warning(request)
     logger.warning(request.data)
     logger.warning(dir(request))
@@ -49,7 +49,7 @@ def volume_create():
 @app.route('/VolumeDriver.Remove', methods=['POST'])
 @as_json
 def volume_remove():
-    data = request.get_json()
+    data = get_json()
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -65,7 +65,7 @@ def volume_remove():
 @app.route('/VolumeDriver.Mount', methods=['POST'])
 @as_json
 def volume_mount():
-    data = request.get_json()
+    data = get_json()
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -85,7 +85,7 @@ def volume_mount():
 @app.route('/VolumeDriver.Unmount', methods=['POST'])
 @as_json
 def volume_unmount():
-    data = request.get_json()
+    data = get_json()
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -113,7 +113,7 @@ def volumes_list():
 @app.route('/VolumeDriver.Path', methods=['POST'])
 @as_json
 def volume_path():
-    data = request.get_json()
+    data = get_json()
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -129,7 +129,7 @@ def volume_path():
 @app.route('/VolumeDriver.Get', methods=['POST'])
 @as_json
 def volume_get():
-    data = request.get_json()
+    data = get_json()
     logger.warning(request)
     logger.warning(request.data)
     logger.warning(dir(request))

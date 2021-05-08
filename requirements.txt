@@ -1,5 +1,4 @@
 flask
-flask-json
 satella
 gunicorn
 ujson
