@@ -4,6 +4,7 @@
   "entrypoint": [
     "/run.sh"
   ],
+  "workdir": "/app",
   "interface": {
     "socket": "zookeeper-volume.sock",
     "types": [
