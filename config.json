@@ -1,0 +1,42 @@
+{
+  "description": "sshFS plugin for Docker",
+  "documentation": "https://docs.docker.com/engine/extend/plugins/",
+  "entrypoint": [
+    "/run.sh"
+  ],
+  "interface": {
+    "socket": "zookeeper-plugin.sock",
+    "types": [
+      "docker.volumedriver/1.0"
+    ]
+  },
+  "linux": {
+    "capabilities": [
+      "CAP_SYS_ADMIN"
+    ],
+    "devices": [
+      {
+        "path": "/dev/fuse"
+      }
+    ]
+  },
+  "mounts": [
+    {
+      "destination": "/socket",
+      "options": ["bind"],
+      "name": "socket",
+      "source": "/run/docker/plugins",
+      "type": "bind"
+    },
+    {
+      "destination": "/state",
+      "options": [
+        "rbind"
+      ],
+      "name": "state",
+      "source": "/var/lib/docker/plugins/",
+      "type": "bind"
+    }
+  ],
+  "propagatedmount": "/mnt/volumes"
+}
