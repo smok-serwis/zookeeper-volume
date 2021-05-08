@@ -10,8 +10,8 @@ def get_json():
 
 def as_json(c):
     @wraps(c)
-    def inner():
-        d = c()
+    def inner(*args, **kwargs):
+        d = c(*args, **kwargs)
         if isinstance(d, tuple):
             return_code = d[1]
             data = d[0]

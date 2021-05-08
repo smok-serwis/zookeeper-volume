@@ -58,7 +58,7 @@ class VolumeDatabase(Monitor):
                    path: tp.Optional[str] = None):
         if name not in self.volumes:
             try:
-                vol = Volume.load_from_disk(name)
+                vol = Volume.load_from_dict(name)
             except KeyError:
                 if hosts is None:
                     raise KeyError('Cannot obtain an empty volume!')

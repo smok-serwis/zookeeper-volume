@@ -1,7 +1,5 @@
 import os
 import logging
-import ujson
-from flask import Response
 from satella.instrumentation import Traceback
 
 from zookeeper_plugin.app import app
