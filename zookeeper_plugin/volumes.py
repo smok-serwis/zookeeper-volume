@@ -94,7 +94,9 @@ class Volume(Closeable):
         self.process = None
 
     def mount(self):
-        path = os.path.join(BASE_PATH, self.volume_id)
+        path = self.to_path()
+        if not os.path.exists(path):
+            os.mkdir(path)
         self.process = subprocess.Popen(f'zookeeperfuse {path} -- '
                                         f'--zooPath {self.path} --zooHosts {self.handler.hosts}')
         time.sleep(1)
@@ -108,6 +110,9 @@ class Volume(Closeable):
             logger.warning(f'Forcibly terminating PID {self.process.pid}')
 
         self.process = None
+        path = self.to_path()
+        if os.path.exists(path):
+            os.rmdir(path)
 
     def on_mount(self):
         with self.monitor:
