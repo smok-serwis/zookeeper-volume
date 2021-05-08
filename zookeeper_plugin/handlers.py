@@ -22,13 +22,8 @@ def activate():
 @as_json
 def volume_create():
     data = get_json()
-    logger.warning(request)
-    logger.warning(request.data)
-    logger.warning(dir(request))
-    for key in request.__dict__:
-        logger.warning('%s=%s', key, request.__dict__[key])
     name = data['Name']
-    options = data.get('Options', {})
+    options = data.get('Opts', {})
     if 'host' not in options:
         return {'Err': 'expected host in options'}, 400
     if 'host' in options:
@@ -130,9 +125,6 @@ def volume_path():
 @as_json
 def volume_get():
     data = get_json()
-    logger.warning(request)
-    logger.warning(request.data)
-    logger.warning(dir(request))
     name = data['Name']
     zdb = VolumeDatabase()
     try:

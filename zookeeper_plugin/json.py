@@ -18,5 +18,6 @@ def as_json(c):
         else:
             return_code = 200
             data = d
-        return Response(response=ujson.dumps(data), status=return_code)
+        return Response(response=ujson.dumps(data), status=return_code,
+                        content_type='application/vnd.docker.plugins.v1+json')
     return inner
