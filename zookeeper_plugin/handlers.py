@@ -1,9 +1,13 @@
+import logging
 from flask import request
 from flask_json import as_json
 
 from .app import app
 from .volumes import VolumeDatabase
 from .exceptions import MountException
+
+
+logger = logging.getLogger(__name__)
 
 
 @app.route('/Plugin.Activate', methods=['POST'])
@@ -18,6 +22,10 @@ def activate():
 @as_json
 def volume_create():
     data = request.get_json()
+    logger.warning(request)
+    logger.warning(dir(request))
+    for key in request.__dict__:
+        logger.warning('%s=%s', key, request.__dict__[key])
     name = data['Name']
     options = data.get('Options', {})
     if 'host' not in options:

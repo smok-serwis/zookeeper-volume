@@ -45,3 +45,8 @@ Volume must have at least a single option:
 
 It accepts also a `path` argument, which is the address of the z-node to 
 mount as root.
+
+# Thanks and credits
+
+Special thanks to [borowskk's zookeeper-fuse](https://github.com/borowskk/zookeeper-fuse.git), 
+without which this plugin wouldn't happen to exist.
