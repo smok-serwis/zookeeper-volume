@@ -79,12 +79,12 @@ class VolumeDatabase(Monitor):
         write_json_to_file(STATE_FILE, data)
 
 
-class Volume(Closeable, Monitor, metaclass=metaclass_maker):
-    hosts = 'handler', 'name', 'hosts', 'path', 'volume_id', 'process', 'reference_count'
+class Volume(Closeable):
+    hosts = 'name', 'hosts', 'path', 'volume_id', 'process', 'reference_count', 'monitor'
 
     def __init__(self, hosts: tp.Sequence[str], name: str, path: str):
         Closeable.__init__(self)
-        Monitor.__init__(self)
+        self.monitor = Monitor()
         self.hosts = to_hosts(hosts)
         self.name = name
         self.path = path
@@ -103,17 +103,17 @@ class Volume(Closeable, Monitor, metaclass=metaclass_maker):
         if self.process.returncode is None:
             logger.warning(f'Forcibly terminating PID {self.process.pid}')
 
-    @Monitor.synchronized
     def on_mount(self):
-        if self.reference_count == 0 and self.process is None:
-            self.mount()
-        self.reference_count += 1
+        with self.monitor:
+            if self.reference_count == 0 and self.process is None:
+                self.mount()
+            self.reference_count += 1
 
-    @Monitor.synchronized
     def on_unmount(self):
-        if self.reference_count == 1:
-            self.unmount()
-        self.reference_count -= 1
+        with self.monitor:
+            if self.reference_count == 1:
+                self.unmount()
+            self.reference_count -= 1
 
     def to_path(self) -> str:
         return os.path.join(BASE_PATH, self.volume_id)
