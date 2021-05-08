@@ -1,5 +1,5 @@
 {
-  "description": "sshFS plugin for Docker",
+  "description": "Zookeeper as a Volume plugin for Docker",
   "documentation": "https://docs.docker.com/engine/extend/plugins/",
   "entrypoint": [
     "/run.sh"
