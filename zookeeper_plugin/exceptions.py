@@ -12,10 +12,23 @@ class MountException(Exception):
     pass
 
 
+@app.errorhandler(KeyError)
+@as_json
+def handle_key_errors(e):
+    logger.debug('KeyError: %s', e, exc_info=Traceback().pretty_print())
+    return {'Err': f'Key error {e}'}, 400
+
+
+@app.errorhandler(TypeError)
+@as_json
+def handle_type_errors(e):
+    logger.debug('TypeError: %s', e, exc_info=Traceback().pretty_print())
+    return {'Err': f'Type error {e}'}, 400
+
+
 @app.errorhandler(Exception)
 @as_json
-def handle_exception(e):
-    if os.environ.get('DEBUG', '0') != '0':
-        logger.error(Traceback().pretty_print(), exc_info=e)
+def handle_exceptions(e):
+    logger.debug('Exception: %s', e, exc_info=Traceback().pretty_print())
     return {'Err': str(e)}, 500
 

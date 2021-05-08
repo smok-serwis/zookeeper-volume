@@ -87,7 +87,7 @@ class Volume(Closeable):
         self.monitor = Monitor()
         self.hosts = to_hosts(hosts)
         self.name = name
-        self.path = path
+        self._path = path
         self.reference_count = 0
         self.volume_id = str(volume_id_assigner.allocate_int())
         self.process = None
@@ -97,7 +97,7 @@ class Volume(Closeable):
         if not os.path.exists(path):
             os.mkdir(path)
         self.process = subprocess.Popen(f'zookeeperfuse {path} -- '
-                                        f'--zooPath {self.path} --zooHosts {self.hosts}')
+                                        f'--zooPath {self._path} --zooHosts {self.hosts}')
         time.sleep(1)
         if not self.alive:
             raise MountException()
@@ -140,7 +140,7 @@ class Volume(Closeable):
         return {
             'hosts': self.hosts,
             'name': self.name,
-            'path': self.path
+            'path': self._path
         }
 
     @property
