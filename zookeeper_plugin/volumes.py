@@ -12,7 +12,7 @@ from satella.coding.concurrent import IDAllocator
 from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
 
-from zookeeper_plugin.exceptions import MountException
+from .exceptions import MountException
 
 
 def to_hosts(items: tp.Union[tp.Sequence[str]]) -> str:
@@ -63,7 +63,7 @@ class VolumeDatabase(Monitor):
     @for_argument(None, to_hosts)
     def get_volume(self, name: str,
                    hosts: tp.Optional[tp.Sequence[str]] = None,
-                   path: tp.Optional[str] = None):
+                   path: tp.Optional[str] = None) -> Volume:
         if name not in self.volumes:
             if hosts is None or path is None:
                 raise KeyError()
@@ -84,6 +84,8 @@ class VolumeDatabase(Monitor):
 
 
 class Volume(Closeable):
+    __slots__ = 'monitor', 'hosts', 'name', '_path', 'reference_count', 'volume_id', 'process'
+
     def __init__(self, hosts: tp.Sequence[str], name: str, path: str):
         super().__init__()
         self.monitor = Monitor()
@@ -94,7 +96,7 @@ class Volume(Closeable):
         self.volume_id = str(volume_id_assigner.allocate_int())
         self.process = None
 
-    def mount(self):
+    def mount(self) -> None:
         path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
@@ -106,7 +108,7 @@ class Volume(Closeable):
         if not self.alive:
             raise MountException()
 
-    def unmount(self):
+    def unmount(self) -> None:
         self.process.terminate()
 
         if self.process.returncode is None:
