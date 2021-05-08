@@ -1,5 +1,4 @@
 import logging
-from flask import request
 
 from .app import app
 from .json import get_json, as_json
@@ -22,6 +21,7 @@ def activate():
 @as_json
 def volume_create():
     data = get_json()
+    logger.debug('VolumeDriver.Create(%s)', data)
     name = data['Name']
     options = data.get('Opts', {})
     if 'host' not in options:
@@ -45,13 +45,14 @@ def volume_create():
 @as_json
 def volume_remove():
     data = get_json()
+    logger.debug('VolumeDriver.Remove(%s)', data)
+
     name = data['Name']
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
     except KeyError:
-        return {'Err': 'volume does not exist',
-                'Mountpoint': ''}, 404
+        return {'Err': 'volume does not exist'}, 404
     zdb.rm_volume(vol)
     zdb.sync_to_disk()
     return {'Err': ''}
@@ -61,6 +62,7 @@ def volume_remove():
 @as_json
 def volume_mount():
     data = get_json()
+    logger.debug('VolumeDriver.Mount(%s)', data)
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -97,6 +99,7 @@ def volume_unmount():
 @as_json
 def volumes_list():
     result = []
+    logger.debug('VolumeDriver.List()')
     zdb = VolumeDatabase()
     for volume in zdb.get_all_volumes():
         result.append({'Name': volume.name,
@@ -109,6 +112,7 @@ def volumes_list():
 @as_json
 def volume_path():
     data = get_json()
+    logger.debug('VolumeDriver.Path(%s)', data)
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -125,6 +129,7 @@ def volume_path():
 @as_json
 def volume_get():
     data = get_json()
+    logger.debug('VolumeDriver.Get(%s)', data)
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -143,4 +148,5 @@ def volume_get():
 @app.route('/VolumeDriver.Capabilities', methods=['POST'])
 @as_json
 def capabilities_get():
+    logger.debug('VolumeDriver.Capabilities')
     return {'Capabilities': {'Scope': 'global'}}
