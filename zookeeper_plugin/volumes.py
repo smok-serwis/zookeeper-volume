@@ -98,7 +98,7 @@ class Volume(Closeable):
         path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
-        self.process = subprocess.Popen(['zookeeperfuse', path, '--',
+        self.process = subprocess.Popen(['/usr/bin/zookeeperfuse', path, '--',
                                         '--zooPath', self._path, '--zooHosts',
                                          self.hosts], stdout=subprocess.STDOUT,
                                         stderr=subprocess.STDOUT)
