@@ -23,6 +23,7 @@ def activate():
 def volume_create():
     data = request.get_json()
     logger.warning(request)
+    logger.warning(request.data)
     logger.warning(dir(request))
     for key in request.__dict__:
         logger.warning('%s=%s', key, request.__dict__[key])
