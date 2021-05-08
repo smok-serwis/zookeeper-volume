@@ -4,6 +4,15 @@
   "entrypoint": [
     "/run.sh"
   ],
+  "env": [
+    {
+      "name": "DEBUG",
+      "settable": [
+        "value"
+      ],
+      "value": "0"
+    }
+  ],
   "workdir": "/app",
   "interface": {
     "socket": "zookeeper-volume.sock",

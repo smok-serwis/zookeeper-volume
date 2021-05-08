@@ -1,9 +1,12 @@
+import logging
 from flask import request
 from flask_json import as_json
 
 from .app import app
 from .connections import VolumeDatabase
 from .exceptions import MountException
+
+logger = logging.getLogger(__name__)
 
 
 @app.route('/VolumeDriver.Create')
@@ -12,6 +15,7 @@ def volume_create():
     data = request.get_json()
     name = data['Name']
     options = data.get('Options', {})
+    logger.debug('Volume.create(%s)', data)
     if 'host' not in options:
         return {'Err': 'expected host in options'}, 400
     if 'host' in options:
@@ -34,6 +38,7 @@ def volume_create():
 def volume_remove():
     data = request.get_json()
     name = data['Name']
+    logger.debug('Volume.remove(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -50,6 +55,7 @@ def volume_remove():
 def volume_mount():
     data = request.get_json()
     name = data['Name']
+    logger.debug('Volume.mount(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -70,6 +76,7 @@ def volume_mount():
 def volume_unmount():
     data = request.get_json()
     name = data['Name']
+    logger.debug('Volume.unmount(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -97,6 +104,7 @@ def volumes_list():
 @as_json
 def volume_path():
     data = request.get_json()
+    logger.debug('Volume.path(%s)', data)
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -114,6 +122,7 @@ def volume_path():
 def volume_get():
     data = request.get_json()
     name = data['Name']
+    logger.debug('Volume.get(%s)', data)
     zdb = VolumeDatabase()
     try:
         vol = zdb.get_volume(name)
@@ -131,4 +140,6 @@ def volume_get():
 @app.route('/VolumeDriver.Capabilities')
 @as_json
 def capabilities_get():
+    logger.debug('Volume.capabilities')
+
     return {'Capabilities': {'Scope': 'global'}}

@@ -3,13 +3,11 @@ from __future__ import annotations
 import logging
 import atexit
 import os
-import shutil
 import subprocess
-import sys
 import time
 import typing as tp
 
-from satella.coding import Closeable, Monitor, rethrow_as, silence_excs, metaclass_maker
+from satella.coding import Closeable, Monitor, silence_excs
 from satella.coding.concurrent import IDAllocator
 from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
