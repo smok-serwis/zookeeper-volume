@@ -7,7 +7,7 @@ import subprocess
 import time
 import typing as tp
 
-from satella.coding import Closeable, Monitor, silence_excs
+from satella.coding import Closeable, Monitor, silence_excs, for_argument
 from satella.coding.concurrent import IDAllocator
 from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
@@ -56,9 +56,11 @@ class VolumeDatabase(Monitor):
         vol.delete()
         vol.close()
 
+    @for_argument(None, to_hosts)
     def volume_exists(self, name: str) -> bool:
         return name in self.volumes
 
+    @for_argument(None, to_hosts)
     def get_volume(self, name: str,
                    hosts: tp.Optional[tp.Sequence[str]] = None,
                    path: tp.Optional[str] = None):
@@ -108,7 +110,7 @@ class Volume(Closeable):
         self.process.terminate()
 
         if self.process.returncode is None:
-            logger.warning(f'Forcibly terminating PID {self.process.pid}')
+            logger.warning('Forcibly terminating PID %s', self.process.pid)
 
         self.process = None
         path = self.path
