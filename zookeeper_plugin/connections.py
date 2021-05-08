@@ -8,7 +8,7 @@ import subprocess
 import sys
 import typing as tp
 
-from satella.coding import Closeable, Monitor, rethrow_as, silence_excs
+from satella.coding import Closeable, Monitor, rethrow_as, silence_excs, metaclass_maker
 from satella.coding.concurrent import IDAllocator
 from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
@@ -79,7 +79,7 @@ class VolumeDatabase(Monitor):
         write_json_to_file(STATE_FILE, data)
 
 
-class Volume(Closeable, Monitor):
+class Volume(Closeable, Monitor, metaclass=metaclass_maker):
     hosts = 'handler', 'name', 'hosts', 'path', 'volume_id', 'process', 'reference_count'
 
     def __init__(self, hosts: tp.Sequence[str], name: str, path: str):
