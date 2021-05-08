@@ -5,7 +5,7 @@
     "/run.sh"
   ],
   "interface": {
-    "socket": "zookeeper-plugin.sock",
+    "socket": "zookeeper-volume.sock",
     "types": [
       "docker.volumedriver/1.0"
     ]
