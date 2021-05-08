@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -d "rootfs" ]; then
+    rm -rf rootfs
+fi
+
 docker build -t smok-serwis/zookeeper-volume .
 ID=$(docker create smok-serwis/zookeeper-volume true)
 mkdir rootfs
