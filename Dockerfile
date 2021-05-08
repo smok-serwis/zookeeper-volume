@@ -11,7 +11,7 @@ RUN autoreconf -fi && \
 FROM python:3.8 AS runtime
 
 RUN apt-get update && \
-    apt-get install -y libzookeeper-mt2 && \
+    apt-get install -y libzookeeper-mt2 libfuse2 && \
     apt-get clean
 
 COPY --from=builder /zookeeper-fuse/zookeeperfuse /usr/bin/zookeeperfuse
