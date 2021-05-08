@@ -96,8 +96,10 @@ class Volume(Closeable):
         path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
-        self.process = subprocess.Popen(f'zookeeperfuse {path} -- '
-                                        f'--zooPath {self._path} --zooHosts {self.hosts}')
+        self.process = subprocess.Popen(['zookeeperfuse', path, '--',
+                                        '--zooPath', self._path, '--zooHosts',
+                                         self.hosts], stdout=subprocess.STDOUT,
+                                        stderr=subprocess.STDOUT)
         time.sleep(1)
         if not self.alive:
             raise MountException()
@@ -133,8 +135,7 @@ class Volume(Closeable):
         if super().close():
             if self.process is not None:
                 self.unmount()
-            volume_id = int(self.volume_id)
-            volume_id_assigner.mark_as_free(volume_id)
+            volume_id_assigner.mark_as_free(int(self.volume_id))
 
     def to_dict(self) -> dict:
         return {
