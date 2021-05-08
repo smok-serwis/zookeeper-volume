@@ -1,6 +1,30 @@
 # zookeeper-volume-plugin
 A Docker volume as a ZooKeeper tree volume plugin
 
+# Installation
+
+To install just type:
+
+```bash
+docker plugin smok-serwis/zookeeper-volume
+docker pugin enable smok-serwis/zookeeper-volume
+```
+
+# Defining volumes
+
+To define a volume just type
+
+```bash
+docker volume create -d smok-serwis/zookeeper-volume -ohost=192.168.2.237 -opath=/zk-child zookeeper
+```
+
+You can also omit path to use the default root.
+You can specify multiple hosts by using `hosts` option, such as:
+
+```bash
+docker volume create -d smok-serwis/zookeeper-volume -ohosts=192.168.2.237,192.168.2.238:2000 zookeeper
+```
+
 # Running
 
 It got to be mounted with two volumes:

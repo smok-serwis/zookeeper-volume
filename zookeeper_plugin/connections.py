@@ -6,12 +6,15 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 import typing as tp
 
 from satella.coding import Closeable, Monitor, rethrow_as, silence_excs, metaclass_maker
 from satella.coding.concurrent import IDAllocator
 from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
+
+from zookeeper_plugin.exceptions import MountException
 
 
 def to_hosts(items: tp.Sequence[str]) -> str:
@@ -96,12 +99,17 @@ class Volume(Closeable):
         path = os.path.join(BASE_PATH, self.volume_id)
         self.process = subprocess.Popen(f'zookeeperfuse {path} -- '
                                         f'--zooPath {self.path} --zooHosts {self.handler.hosts}')
+        time.sleep(1)
+        if not self.alive:
+            raise MountException()
 
     def unmount(self):
         self.process.terminate()
 
         if self.process.returncode is None:
             logger.warning(f'Forcibly terminating PID {self.process.pid}')
+
+        self.process = None
 
     def on_mount(self):
         with self.monitor:
@@ -131,6 +139,12 @@ class Volume(Closeable):
             'name': self.name,
             'path': self.path
         }
+
+    @property
+    def alive(self) -> bool:
+        if self.process is None:
+            return False
+        return self.process.returncode is None
 
     @classmethod
     def load_from_dict(cls, data) -> Volume:

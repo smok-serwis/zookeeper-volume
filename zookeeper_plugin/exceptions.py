@@ -1,0 +1,2 @@
+class MountException(Exception):
+    pass

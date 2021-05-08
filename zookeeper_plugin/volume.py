@@ -1,8 +1,9 @@
 from flask import request
 from flask_json import as_json
 
-from zookeeper_plugin.app import app
-from zookeeper_plugin.connections import VolumeDatabase
+from .app import app
+from .connections import VolumeDatabase
+from .exceptions import MountException
 
 
 @app.route('/VolumeDriver.Create')
@@ -30,7 +31,7 @@ def volume_create():
 
 @app.route('/VolumeDriver.Remove')
 @as_json
-def unmount_volume():
+def volume_remove():
     data = request.get_json()
     name = data['Name']
     zdb = VolumeDatabase()
@@ -46,7 +47,7 @@ def unmount_volume():
 
 @app.route('/VolumeDriver.Mount')
 @as_json
-def mount_volume():
+def volume_mount():
     data = request.get_json()
     name = data['Name']
     zdb = VolumeDatabase()
@@ -55,14 +56,18 @@ def mount_volume():
     except KeyError:
         return {'Err': 'volume does not exist',
                 'Mountpoint': ''}, 404
-    vol.on_mount()
+    try:
+        vol.on_mount()
+    except MountException:
+        return {'Err': 'Exception on mounting',
+                'Mountpoint': ''}, 500
     return {'Mountpoint': vol.to_path(),
             'Err': ''}
 
 
 @app.route('/VolumeDriver.Unmount')
 @as_json
-def unmount_volume():
+def volume_unmount():
     data = request.get_json()
     name = data['Name']
     zdb = VolumeDatabase()
@@ -78,7 +83,7 @@ def unmount_volume():
 
 @app.route('/VolumeDriver.List')
 @as_json
-def get_volumes():
+def volumes_list():
     result = []
     zdb = VolumeDatabase()
     for volume in zdb.get_all_volumes():
@@ -90,7 +95,7 @@ def get_volumes():
 
 @app.route('/VolumeDriver.Path')
 @as_json
-def get_path():
+def volume_path():
     data = request.get_json()
     name = data['Name']
     zdb = VolumeDatabase()
@@ -106,7 +111,7 @@ def get_path():
 
 @app.route('/VolumeDriver.Get')
 @as_json
-def get_volume_info():
+def volume_get():
     data = request.get_json()
     name = data['Name']
     zdb = VolumeDatabase()
@@ -122,7 +127,8 @@ def get_volume_info():
     }, 'Err': ''
     }
 
+
 @app.route('/VolumeDriver.Capabilities')
 @as_json
-def get_capabilities():
+def capabilities_get():
     return {'Capabilities': {'Scope': 'global'}}
