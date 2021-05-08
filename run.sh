@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec gunicorn --bind unix:/socket/zookeeper-volume zookeeper_plugin.run:app
+exec gunicorn -w 4 --bind unix:/run/docker/plugins/zookeeper-volume.sock zookeeper_plugin.run:app
