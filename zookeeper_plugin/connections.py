@@ -45,8 +45,7 @@ class VolumeDatabase(Monitor):
         self.volumes[name] = vol
 
     def rm_volume(self, vol: Volume):
-        name = vol.name
-        vol = self.volumes.pop(name)
+        vol = self.volumes.pop(vol.name)
         vol.delete()
         vol.close()
 
@@ -92,7 +91,6 @@ class Volume(Closeable, Monitor):
         self.reference_count = 0
         self.volume_id = str(volume_id_assigner.allocate_int())
         self.process = None
-        VolumeDatabase().add_volume(self)
 
     def mount(self):
         path = os.path.join(BASE_PATH, self.volume_id)

@@ -22,7 +22,8 @@ def volume_create():
     zdb = VolumeDatabase()
     if zdb.volume_exists(name):
         return {'Err': 'volume already exists'}, 409
-    zdb.get_volume(hosts, name, path)
+    vol = zdb.get_volume(hosts, name, path)
+    zdb.add_volume(vol)
     zdb.sync_to_disk()
     return {'Err': ''}
 
@@ -34,11 +35,11 @@ def unmount_volume():
     name = data['Name']
     zdb = VolumeDatabase()
     try:
-        zdb.get_volume(name)
+        vol = zdb.get_volume(name)
     except KeyError:
         return {'Err': 'volume does not exist',
                 'Mountpoint': ''}, 404
-    zdb.rm_volume(name)
+    zdb.rm_volume(vol)
     zdb.sync_to_disk()
     return {'Err': ''}
 
