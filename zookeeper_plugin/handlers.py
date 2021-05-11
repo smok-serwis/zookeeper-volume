@@ -72,7 +72,7 @@ def volume_mount():
         return {'Err': 'volume does not exist',
                 'Mountpoint': ''}, 404
     try:
-        vol.on_mount()
+        vol.on_mount(data['ID'])
     except MountException:
         return {'Err': 'Exception on mounting',
                 'Mountpoint': ''}, 500
@@ -92,7 +92,7 @@ def volume_unmount():
         return {'Err': 'volume does not exist',
                 'Mountpoint': ''}, 404
 
-    vol.on_unmount()
+    vol.on_unmount(data['ID'])
     return {'Err': ''}
 
 
