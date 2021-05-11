@@ -162,7 +162,6 @@ class Volume(Closeable):
             volume_id_assigner.mark_as_free(int(self.volume_id))
 
     def delete(self) -> None:
-        # since Docker has a nasty habit of not calling Unmount when container finishes
         if self.refcount:
             raise RuntimeError('Volume is still mounted!')
         self.close()
@@ -183,13 +182,12 @@ class Volume(Closeable):
         if self.process is None:
             return False
         self.wait(0)
-        if self.process.returncode is not None:
+        a = self.process.returncode is None
+        if not a:
             if self.process.returncode:
                 logger.error('zookeeperfuse terminated with RC of %s', self.process.returncode)
             self.process = None
-            return False
-        else:
-            return True
+        return a
 
     @classmethod
     def load_from_dict(cls, data) -> Volume:
