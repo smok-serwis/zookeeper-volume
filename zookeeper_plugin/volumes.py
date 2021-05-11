@@ -92,7 +92,7 @@ class Volume(Closeable):
         self.hosts = to_hosts(hosts)
         self.name = name
         self._path = path
-        self.reference_count = 0
+        self.users = set()
         self.volume_id = str(volume_id_assigner.allocate_int())
         self.process = None
         self.mode = mode
@@ -118,26 +118,30 @@ class Volume(Closeable):
 
     def unmount(self) -> None:
         self.process.terminate()
+        with silence_excs(subprocess.TimeoutExpired):
+            self.process.wait(timeout=1)
 
         if self.process.returncode is None:
             logger.warning('Forcibly terminating PID %s', self.process.pid)
+            self.process.kill()
+            self.process.wait(timeout=1)
 
         self.process = None
         path = self.path
         if os.path.exists(path):
             os.rmdir(path)
 
-    def on_mount(self) -> None:
+    def on_mount(self, user: str) -> None:
         with self.monitor:
-            if self.reference_count == 0 and self.process is None:
+            if not self.users and self.process is None:
                 self.mount()
-            self.reference_count += 1
+            self.users.add(user)
 
-    def on_unmount(self) -> None:
+    def on_unmount(self, user: str) -> None:
         with self.monitor:
-            if self.reference_count == 1:
+            if len(self.users) == 1:
                 self.unmount()
-            self.reference_count -= 1
+            self.users.remove(user)
 
     @property
     def path(self) -> str:
@@ -150,7 +154,7 @@ class Volume(Closeable):
             volume_id_assigner.mark_as_free(int(self.volume_id))
 
     def delete(self) -> None:
-        if self.reference_count != 0:
+        if self.users:
             raise MountException('Volume in use yet')
         if os.path.exists(self.path):
             os.rmdir(self.path)
