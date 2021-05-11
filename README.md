@@ -1,4 +1,6 @@
 # zookeeper-volume-plugin
+[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.0-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
+
 A Docker volume as a ZooKeeper tree volume plugin
 
 # Installation
