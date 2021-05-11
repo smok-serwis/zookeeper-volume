@@ -84,6 +84,7 @@ def volume_mount():
 @as_json
 def volume_unmount():
     data = get_json()
+    logger.debug('VolumeDriver.Unmount(%s)', data)
     name = data['Name']
     zdb = VolumeDatabase()
     try:
@@ -91,8 +92,11 @@ def volume_unmount():
     except KeyError:
         return {'Err': 'volume does not exist',
                 'Mountpoint': ''}, 404
+    try:
+        vol.on_unmount()
+    except RuntimeError:
+        return {'Err': 'volume still mounted'}, 400
 
-    vol.on_unmount()
     return {'Err': ''}
 
 

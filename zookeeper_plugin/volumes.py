@@ -160,7 +160,7 @@ class Volume(Closeable):
     def delete(self) -> None:
         # since Docker has a nasty habit of not calling Unmount when container finishes
         if self.refcount:
-            logger.warning('Deleting a still mounted volume, refcount is %s', self.refcount)
+            raise RuntimeError('Volume is still mounted!')
         self.close()
 
     def to_dict(self) -> dict:
