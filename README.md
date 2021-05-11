@@ -43,6 +43,16 @@ Other options can be optionally given:
     (default is DIR)
 * `auth`: zookeeper authentication string (by default none given)
 
+# Debugging
+
+To enable debug logs just type:
+
+```bash
+docker plugin set smokserwis/zookeeper-volume DEBUG=1
+```
+
+They will be dumped at `/var/log/daemon.log` or the usual place where your Docker drops it's logs.
+
 # Building from source
 
 Just check this repo out on a normal UNIX platform (sorry, only UNIXes supported for the time being)
