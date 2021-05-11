@@ -62,11 +62,13 @@ class VolumeDatabase(Monitor):
     @for_argument(None, to_hosts)
     def get_volume(self, name: str,
                    hosts: tp.Optional[tp.Sequence[str]] = None,
-                   path: tp.Optional[str] = None) -> Volume:
+                   path: tp.Optional[str] = None,
+                   mode: str = 'DIR',
+                   auth: tp.Optional[str] = None) -> Volume:
         if name not in self.volumes:
             if hosts is None or path is None:
                 raise KeyError()
-            vol = Volume(hosts, name, path)
+            vol = Volume(hosts, name, path, mode, auth)
             self.volumes[name] = vol
             return vol
         else:
@@ -83,9 +85,8 @@ class VolumeDatabase(Monitor):
 
 
 class Volume(Closeable):
-    __slots__ = 'monitor', 'hosts', 'name', '_path', 'reference_count', 'volume_id', 'process'
-
-    def __init__(self, hosts: tp.Sequence[str], name: str, path: str):
+    def __init__(self, hosts: tp.Sequence[str], name: str, path: str,
+                 mode: str = 'DIR', auth: tp.Optional[str] = None):
         super().__init__()
         self.monitor = Monitor()
         self.hosts = to_hosts(hosts)
@@ -94,16 +95,22 @@ class Volume(Closeable):
         self.reference_count = 0
         self.volume_id = str(volume_id_assigner.allocate_int())
         self.process = None
+        self.mode = mode
+        self.auth = auth
 
     def mount(self) -> None:
         path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
-        self.process = subprocess.Popen(
-            ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', '-o', 'kernel_cache', path, '--',
-             '--zooHosts', self.hosts], stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL)
+        commandline = ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', path, '--',
+                       '--zooHosts', self.hosts, '--zooPath', self._path]
+        if self.mode == 'FILE':
+            commandline.extend(['--leafMode', self.mode])
+        if self.auth:
+            commandline.extend(['--zooAuthentication', self.auth])
+        self.process = subprocess.Popen(commandline, stdin=subprocess.DEVNULL,
+                                        stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL)
 
         time.sleep(1)
         if not self.alive:
@@ -149,11 +156,15 @@ class Volume(Closeable):
             os.rmdir(self.path)
 
     def to_dict(self) -> dict:
-        return {
+        a = {
             'hosts': self.hosts,
             'name': self.name,
-            'path': self._path
+            'path': self._path,
+            'mode': self.mode
         }
+        if self.auth:
+            a['auth'] = self.auth
+        return a
 
     @property
     def alive(self) -> bool:
@@ -163,4 +174,5 @@ class Volume(Closeable):
 
     @classmethod
     def load_from_dict(cls, data) -> Volume:
-        return Volume(data['hosts'], data['name'], data['path'])
+        return Volume(data['hosts'], data['name'], data['path'],
+                      data.get('mode', 'DIR'), data.get('auth'))

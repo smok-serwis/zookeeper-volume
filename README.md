@@ -45,8 +45,12 @@ Volume must have at least a single option:
 * either `host` for an address and a port name` 
   or `hosts` for multiple of those, separated by a `,`
 
-It accepts also a `path` argument, which is the address of the z-node to 
-mount as root.
+Other options can be optionally given:
+
+* `path`: zookeeper path to mount as root
+* `mode`: [zookeeper-fuse](https://github.com/borowskk/zookeeper-fuse/blob/master/README) access mode 
+    (default is DIR)
+* `auth`: zookeeper authentication string (by default none given)
 
 # Building from source
 

@@ -35,7 +35,8 @@ def volume_create():
     zdb = VolumeDatabase()
     if zdb.volume_exists(name):
         return {'Err': 'volume already exists'}, 409
-    vol = zdb.get_volume(name, hosts, path)
+    vol = zdb.get_volume(name, hosts, path, options.get('mode', 'DIR'),
+                         options.get('auth'))
     zdb.add_volume(vol)
     zdb.sync_to_disk()
     return {'Err': ''}
