@@ -1,45 +1,48 @@
 {
-  "description": "Zookeeper as a Volume plugin for Docker",
-  "documentation": "https://github.com/smok-serwis/zookeeper-volume",
-  "entrypoint": [
+  "Description": "Zookeeper as a Volume plugin for Docker",
+  "Documentation": "https://github.com/smok-serwis/zookeeper-volume",
+  "Entrypoint": [
     "/run.sh"
   ],
-  "env": [
+  "Env": [
     {
-      "name": "DEBUG",
-      "settable": [
+      "Name": "DEBUG",
+      "Settable": [
         "value"
       ],
-      "value": "0"
+      "Value": "0"
     }
   ],
-  "workdir": "/app",
-  "interface": {
-    "socket": "zookeeper-volume.sock",
-    "types": [
-      "docker.volumedriver/1.0"
+  "Workdir": "/app",
+  "Interface": {
+    "Socket": "zookeeper-volume.sock",
+    "Types": [
+      "docker.volumedriver/2.0"
     ]
   },
-  "linux": {
-    "capabilities": [
+  "Linux": {
+    "Capabilities": [
       "CAP_SYS_ADMIN"
     ],
-    "devices": [
+    "Devices": [
       {
-        "path": "/dev/fuse"
+        "Path": "/dev/fuse"
       }
     ]
   },
-  "mounts": [
+  "Network": {
+    "Type": "host"
+  },
+  "Mounts": [
     {
-      "destination": "/state",
-      "options": [
-        "rbind"
+      "Destination": "/state",
+      "Options": [
+        "shared"
       ],
-      "name": "state",
-      "source": "/var/lib/docker/plugins/",
-      "type": "bind"
+      "Name": "state",
+      "Source": "/var/lib/docker/plugins/",
+      "Type": "bind"
     }
   ],
-  "propagatedmount": "/mnt/volumes"
+  "PropagatedMount": "/mnt/volumes"
 }

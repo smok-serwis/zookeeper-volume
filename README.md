@@ -7,7 +7,7 @@ To install just type:
 
 ```bash
 docker plugin smokserwis/zookeeper-volume
-docker pugin enable smokserwis/zookeeper-volume
+docker plugin enable smokserwis/zookeeper-volume
 ```
 
 # Defining volumes
@@ -22,8 +22,10 @@ You can also omit path to use the default root.
 You can specify multiple hosts by using `hosts` option, such as:
 
 ```bash
-docker volume create -d smokserwis/zookeeper-volume -ohosts=192.168.2.237,192.168.2.238:2000 zookeeper
+docker volume create -d smokserwis/zookeeper-volume -ohosts=192.168.2.237:2181,192.168.2.238:2000 zookeeper
 ```
+
+Note that it's mandatory to provide a port number.
 
 # Running
 
