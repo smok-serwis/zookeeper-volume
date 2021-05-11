@@ -121,7 +121,7 @@ class Volume(Closeable):
         if self.process.returncode is None:
             self.process.terminate()
             with silence_excs(subprocess.TimeoutExpired):
-                self.process.wait(timeout=1)
+                self.process.wait(timeout=10)
 
             if self.process.returncode is None:
                 logger.warning('Forcibly terminating PID %s', self.process.pid)
