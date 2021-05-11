@@ -26,6 +26,7 @@ ADD run.sh /run.sh
 COPY --from=builder /zookeeper-fuse/zookeeperfuse /usr/bin/zookeeperfuse
 
 RUN chmod ugo+x /run.sh /usr/bin/zookeeperfuse && \
-    mkdir -p /state /mnt/volumes
+    mkdir -p /state /mnt/volumes /run/docker/plugins
 
-CMD ["/run.sh"]
+CMD ["/usr/local/bin/gunicorn", "-w", "1", "--threads", "4", "--bind",
+     "unix:/run/docker/plugins/zookeeper-volume.sock", "zookeeper_plugin.run:app"]
