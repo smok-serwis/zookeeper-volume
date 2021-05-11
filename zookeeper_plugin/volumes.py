@@ -122,17 +122,16 @@ class Volume(Closeable):
         self.process.wait(timeout=timeout)
 
     def unmount(self) -> None:
-        with silence_excs(subprocess.TimeoutExpired):
-            self.wait(timeout=1)
+        self.wait()
         if self.alive:
             self.process.terminate()
-            self.wait(timeout=10)
+            self.wait(10)
 
             if self.alive:
                 pgid = os.getpgid(self.process.pid)
                 logger.warning('Forcibly terminating PID %s PGID %s', self.process.pid, pgid)
                 os.killpg(pgid)
-                self.wait(timeout=10)
+                self.wait(10)
 
         self.process = None
         path = self.path
