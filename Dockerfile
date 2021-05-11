@@ -8,7 +8,7 @@ WORKDIR /zookeeper-fuse
 RUN autoreconf -fi && \
     ./configure && \
     make -j4
-
+x
 FROM python:3.8 AS runtime
 
 RUN apt-get update && \

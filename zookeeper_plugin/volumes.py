@@ -74,6 +74,7 @@ class VolumeDatabase(Monitor):
             return self.volumes[name]
 
     def close(self) -> None:
+        logger.warning('zookeeper-volume terminating')
         while self.volumes:
             key, vol = self.volumes.popitem()
             vol.close()
@@ -116,19 +117,22 @@ class Volume(Closeable):
         if not self.alive:
             raise MountException('process died shortly after startup')
 
+    @silence_excs(subprocess.TimeoutExpired)
+    def wait(self, timeout=1):
+        self.process.wait(timeout=timeout)
+
     def unmount(self) -> None:
         with silence_excs(subprocess.TimeoutExpired):
-            self.process.wait(timeout=1)
-        if self.process.returncode is None:
+            self.wait(timeout=1)
+        if self.alive:
             self.process.terminate()
-            with silence_excs(subprocess.TimeoutExpired):
-                self.process.wait(timeout=10)
+            self.wait(timeout=10)
 
-            if self.process.returncode is None:
+            if self.alive:
                 pgid = os.getpgid(self.process.pid)
                 logger.warning('Forcibly terminating PID %s PGID %s', self.process.pid, pgid)
                 os.killpg(pgid)
-                self.process.wait(timeout=1)
+                self.wait(timeout=10)
 
         self.process = None
         path = self.path
@@ -178,9 +182,10 @@ class Volume(Closeable):
     def alive(self) -> bool:
         if self.process is None:
             return False
-        with silence_excs(subprocess.TimeoutExpired):
-            self.process.wait(0)
+        self.wait(0)
         if self.process.returncode is not None:
+            if self.process.returncode:
+                logger.error('zookeeperfuse terminated with RC of %s', self.process.returncode)
             self.process = None
             return False
         else:
