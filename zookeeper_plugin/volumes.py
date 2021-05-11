@@ -117,14 +117,17 @@ class Volume(Closeable):
             raise MountException('process died shortly after startup')
 
     def unmount(self) -> None:
-        self.process.terminate()
         with silence_excs(subprocess.TimeoutExpired):
             self.process.wait(timeout=1)
-
         if self.process.returncode is None:
-            logger.warning('Forcibly terminating PID %s', self.process.pid)
-            self.process.kill()
-            self.process.wait(timeout=1)
+            self.process.terminate()
+            with silence_excs(subprocess.TimeoutExpired):
+                self.process.wait(timeout=1)
+
+            if self.process.returncode is None:
+                logger.warning('Forcibly terminating PID %s', self.process.pid)
+                self.process.kill()
+                self.process.wait(timeout=1)
 
         self.process = None
         path = self.path
@@ -155,6 +158,8 @@ class Volume(Closeable):
 
     def delete(self) -> None:
         # since Docker has a nasty habit of not calling Unmount when container finishes
+        if self.refcount:
+            logger.warning('Deleting a still mounted volume, refcount is %s', self.refcount)
         self.close()
 
     def to_dict(self) -> dict:
