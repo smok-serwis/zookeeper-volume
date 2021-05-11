@@ -53,7 +53,6 @@ class VolumeDatabase(Monitor):
     def rm_volume(self, vol: Volume) -> None:
         vol = self.volumes.pop(vol.name)
         vol.delete()
-        vol.close()
 
     @for_argument(None, to_hosts)
     def volume_exists(self, name: str) -> bool:
