@@ -101,8 +101,9 @@ class Volume(Closeable):
             os.mkdir(path)
         self.process = subprocess.Popen(
             ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', '-o', 'kernel_cache', path, '--',
-             '--zooHosts', self.hosts], stdout=subprocess.STDOUT,
-            stderr=subprocess.STDOUT)
+             '--zooHosts', self.hosts], stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL)
 
         time.sleep(1)
         if not self.alive:
