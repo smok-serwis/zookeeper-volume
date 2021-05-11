@@ -25,7 +25,6 @@ def to_hosts(items: tp.Union[tp.Sequence[str]]) -> str:
 
 logger = logging.getLogger(__name__)
 
-
 volume_id_assigner = IDAllocator()
 BASE_PATH = '/mnt/volumes'
 STATE_FILE = '/state/zookeeper-volume-state.json'
@@ -36,7 +35,7 @@ class VolumeDatabase(Monitor):
     def __init__(self):
         super().__init__()
         atexit.register(self.close)
-        self.volumes = {}   # type: tp.Dict[str, Volume]
+        self.volumes = {}  # type: tp.Dict[str, Volume]
 
         with silence_excs(OSError):
             data = read_json_from_file(STATE_FILE)
@@ -100,11 +99,11 @@ class Volume(Closeable):
         path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
-        self.process = subprocess.Popen(['/usr/bin/zookeeperfuse', path, '-f',
-                                         '-o', 'auto_unmount',
-                                        '--zooPath', self._path, '--zooHosts',
-                                         self.hosts], stdout=subprocess.STDOUT,
-                                        stderr=subprocess.STDOUT)
+        self.process = subprocess.Popen(
+            ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', '-o', 'kernel_cache', path, '--',
+             '--zooHosts', self.hosts], stdout=subprocess.STDOUT,
+            stderr=subprocess.STDOUT)
+
         time.sleep(1)
         if not self.alive:
             raise MountException('process died shortly after startup')
