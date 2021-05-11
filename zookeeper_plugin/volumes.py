@@ -92,7 +92,7 @@ class Volume(Closeable):
         self.hosts = to_hosts(hosts)
         self.name = name
         self._path = path
-        self.users = set()
+        self.refcount = 0
         self.volume_id = str(volume_id_assigner.allocate_int())
         self.process = None
         self.mode = mode
@@ -131,17 +131,17 @@ class Volume(Closeable):
         if os.path.exists(path):
             os.rmdir(path)
 
-    def on_mount(self, user: str) -> None:
+    def on_mount(self) -> None:
         with self.monitor:
-            if not self.users and self.process is None:
+            if not self.refcount and self.process is None:
                 self.mount()
-            self.users.add(user)
+            self.refcount += 1
 
-    def on_unmount(self, user: str) -> None:
+    def on_unmount(self) -> None:
         with self.monitor:
-            if len(self.users) == 1:
+            if self.refcount == 1 and self.process is not None:
                 self.unmount()
-            self.users.remove(user)
+            self.refcount -= 1
 
     @property
     def path(self) -> str:
