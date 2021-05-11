@@ -109,7 +109,8 @@ class Volume(Closeable):
             commandline.extend(['--zooAuthentication', self.auth])
         self.process = subprocess.Popen(commandline, stdin=subprocess.DEVNULL,
                                         stdout=subprocess.DEVNULL,
-                                        stderr=subprocess.DEVNULL)
+                                        stderr=subprocess.DEVNULL,
+                                        preexec_fn=os.setsid)
 
         time.sleep(1)
         if not self.alive:
@@ -124,8 +125,9 @@ class Volume(Closeable):
                 self.process.wait(timeout=10)
 
             if self.process.returncode is None:
-                logger.warning('Forcibly terminating PID %s', self.process.pid)
-                self.process.kill()
+                pgid = os.getpgid(self.process.pid)
+                logger.warning('Forcibly terminating PID %s PGID %s', self.process.pid, pgid)
+                os.killpg(pgid)
                 self.process.wait(timeout=1)
 
         self.process = None
