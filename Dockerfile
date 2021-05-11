@@ -12,7 +12,8 @@ RUN autoreconf -fi && \
 FROM python:3.8 AS runtime
 
 RUN apt-get update && \
-    apt-get install -y libzookeeper-mt2 fuse libfuse2 libboost1.67-all-dev && \
+    apt-get install -y --no-install-recommends libzookeeper-mt2 fuse libfuse2 \
+                                               libboost-filesystem1.67.0 && \
     apt-get clean
 
 ADD requirements.txt /tmp/requirements.txt
