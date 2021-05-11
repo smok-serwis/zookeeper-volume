@@ -25,6 +25,7 @@ ADD run.sh /run.sh
 
 COPY --from=builder /zookeeper-fuse/zookeeperfuse /usr/bin/zookeeperfuse
 
-RUN chmod ugo+x /run.sh /usr/bin/zookeeperfuse
+RUN chmod ugo+x /run.sh /usr/bin/zookeeperfuse && \
+    mkdir -p /state /mnt/volumes
 
 CMD ["/run.sh"]
