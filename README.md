@@ -9,7 +9,7 @@ A Docker volume as a ZooKeeper tree volume plugin
 To install just type:
 
 ```bash
-docker plugin smokserwis/zookeeper-volume
+docker plugin install smokserwis/zookeeper-volume
 docker plugin enable smokserwis/zookeeper-volume
 ```
 
