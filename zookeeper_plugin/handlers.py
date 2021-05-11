@@ -142,6 +142,10 @@ def volume_get():
     return {'Volume': {
         'Name': vol.name,
         'Mountpoint': vol.path,
+        'Status': {
+            'References': bool(vol.refcount),
+            'Alive': vol.alive
+        }
     }, 'Err': ''
     }
 

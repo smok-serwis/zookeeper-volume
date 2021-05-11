@@ -154,10 +154,8 @@ class Volume(Closeable):
             volume_id_assigner.mark_as_free(int(self.volume_id))
 
     def delete(self) -> None:
-        if self.users:
-            raise MountException('Volume in use yet')
-        if os.path.exists(self.path):
-            os.rmdir(self.path)
+        # since Docker has a nasty habit of not calling Unmount when container finishes
+        self.close()
 
     def to_dict(self) -> dict:
         a = {
@@ -174,7 +172,13 @@ class Volume(Closeable):
     def alive(self) -> bool:
         if self.process is None:
             return False
-        return self.process.returncode is None
+        with silence_excs(subprocess.TimeoutExpired):
+            self.process.wait(0)
+        if self.process.returncode is not None:
+            self.process = None
+            return False
+        else:
+            return True
 
     @classmethod
     def load_from_dict(cls, data) -> Volume:
