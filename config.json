@@ -37,7 +37,7 @@
     {
       "Destination": "/state",
       "Options": [
-        "shared"
+        "rbind"
       ],
       "Name": "state",
       "Source": "/var/lib/docker/plugins/",
