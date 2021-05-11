@@ -1,8 +1,9 @@
 FROM python:3.8 AS builder
 
-RUN git clone https://github.com/borowskk/zookeeper-fuse.git && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y libboost1.67-all-dev libfuse-dev libzookeeper-mt-dev
+
+RUN git clone https://github.com/smok-serwis/zookeeper-fuse.git
 
 WORKDIR /zookeeper-fuse
 RUN autoreconf -fi && \
