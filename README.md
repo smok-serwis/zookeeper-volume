@@ -81,3 +81,9 @@ Other options can be optionally given:
 
 Special thanks to [borowskk's zookeeper-fuse](https://github.com/borowskk/zookeeper-fuse.git), 
 without which this plugin wouldn't happen to exist.
+
+# Changelog
+
+# v1.1 
+
+* HYBRID mode is fully supported
