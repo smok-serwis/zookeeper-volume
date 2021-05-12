@@ -39,8 +39,7 @@ Note that setting the env `DEBUG` during a run of `build.sh` will
 automatically set the variable to 1.
 The variable is kept at default 0 in `config.json`.
 
-Note that the output from zookeeper-fuse, which is normally redirected to /dev/null,
-will be redirected to zookeeper-volume's stdout.
+Note that the output from zookeeper-fuse is in all cases redirected to /dev/null.
 
 # Usage
 

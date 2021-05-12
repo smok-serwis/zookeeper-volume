@@ -103,12 +103,8 @@ class Volume(Closeable):
         if not os.path.exists(path):
             os.mkdir(path)
         commandline = ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', path]
-        kwargs = {'stdout': subprocess.DEVNULL,
-                  'stderr': subprocess.DEVNULL}
         if DEBUG:
             commandline.extend(['-o', 'debug'])
-            kwargs.update(stdout=subprocess.STDOUT,
-                          stderr=subprocess.STDOUT)
         commandline.append('--')
         commandline.extend(['--zooHosts', self.hosts, '--zooPath', self._path])
         if self.mode != 'DIR':
@@ -119,7 +115,8 @@ class Volume(Closeable):
             commandline.extend(['--logLevel', 'DEBUG'])
         self.process = subprocess.Popen(commandline, stdin=subprocess.DEVNULL,
                                         preexec_fn=os.setsid,
-                                        **kwargs)
+                                        stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL)
 
         time.sleep(1)
         if not self.alive:
