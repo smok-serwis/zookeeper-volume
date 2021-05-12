@@ -24,7 +24,6 @@ RUN pip install -r /tmp/requirements.txt && \
 WORKDIR /app
 ADD zookeeper_plugin /app/zookeeper_plugin
 
-COPY --from=builder /zookeeper-fuse/zookeeperfuse /usr/bin/zookeeperfuse
+COPY --from=builder --chown=ugo+x /zookeeper-fuse/zookeeperfuse /usr/bin/zookeeperfuse
 
-RUN chmod ugo+x /usr/bin/zookeeperfuse && \
-    mkdir -p /state /mnt/volumes /run/docker/plugins
+RUN mkdir -p /state /mnt/volumes /run/docker/plugins
