@@ -12,7 +12,9 @@ mkdir rootfs
 docker export $ID | tar -x -C rootfs/ && docker plugin create smokserwis/zookeeper-volume .
 docker rm $ID
 
-if [[ ! -v DEBUG ]]; then
+if [ -z $DEBUG ]; then
+  echo "Not enabling debug mode"
+else
   echo "Enabling debugging mode"
   docker plugin set smokserwis/zookeeper-volume DEBUG=1
 fi
