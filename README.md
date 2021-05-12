@@ -17,6 +17,9 @@ Note that if you keep your Docker root in other place than
 `/var/lib/docker`, best install from source, before which 
 change the path in `config.json`
 
+If you logs are stored somewhere else than `/var/log`, you best
+do it too.
+
 ## Building from source
 
 Just check this repo out on a normal UNIX platform (sorry, only UNIXes supported for the time being)
@@ -39,24 +42,24 @@ Note that setting the env `DEBUG` during a run of `build.sh` will
 automatically set the variable to 1.
 The variable is kept at default 0 in `config.json`.
 
-Note that the output from zookeeper-fuse is in all cases redirected to /dev/null.
+Note that the output from zookeeper-fuse is in:
+ 
+* non-debug cases redirected to /dev/null.
+* in debug cases it will be redirected to 
+  `/var/log/zookeeper-volume/volumename.stdout.txt` and
+  `/var/log/zookeeper-volume/volumename.stderr.txt`
 
 # Usage
 
 To define a volume just type
 
 ```bash
-docker volume create -d smokserwis/zookeeper-volume -ohost=192.168.2.237 -opath=/zk-child zookeeper
+docker volume create -d smokserwis/zookeeper-volume -ohosts=192.168.2.237:2181 -opath=/zk-child zookeeper
 ```
 
-You can also omit path to use the default root.
-You can specify multiple hosts by using `hosts` option, such as:
-
-```bash
-docker volume create -d smokserwis/zookeeper-volume -ohosts=192.168.2.237:2181,192.168.2.238:2000 zookeeper
-```
-
-Note that it's mandatory to provide a port number.
+The thing that you provide in `hosts` option is a ZooKeeper connection string.
+This is the lists of hosts with ports separated with a comma.
+As so, it is mandatory to provide port number.
 
 ## Creating volumes
 

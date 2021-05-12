@@ -2,7 +2,9 @@
   "Description": "Zookeeper as a Volume plugin for Docker",
   "Documentation": "https://github.com/smok-serwis/zookeeper-volume",
   "Entrypoint": [
-    "/run.sh"
+    "/usr/local/bin/gunicorn", "-w",  "1", "--threads", "4",
+    "--bind", "unix:/run/docker/plugins/zookeeper-volume.sock",
+    "zookeeper_plugin.run:app"
   ],
   "Env": [
     {
@@ -42,7 +44,17 @@
       "Name": "state",
       "Source": "/var/lib/docker/plugins/",
       "Type": "bind"
+    },
+    {
+      "Destination": "/logs",
+      "Options": [
+        "rbind"
+      ],
+      "Name": "state",
+      "Source": "/var/log/",
+      "Type": "bind"
     }
+
   ],
   "PropagatedMount": "/mnt/volumes"
 }

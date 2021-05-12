@@ -24,10 +24,8 @@ def volume_create():
     logger.debug('VolumeDriver.Create(%s)', data)
     name = data['Name']
     options = data.get('Opts', {})
-    if 'host' in options:
-        hosts = [options['host']]
-    elif 'hosts' in options:
-        hosts = options['hosts'].split(',')
+    if 'hosts' in options:
+        hosts = options['hosts']
     else:
         return {'Err': 'expected host or hosts in options'}, 400
 

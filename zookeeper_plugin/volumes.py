@@ -7,20 +7,13 @@ import subprocess
 import time
 import typing as tp
 
-from satella.coding import Closeable, Monitor, silence_excs, for_argument
+from satella.coding import Closeable, Monitor, silence_excs
 from satella.coding.concurrent import IDAllocator
 from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
 
 from .exceptions import MountException
 from .app import DEBUG
-
-def to_hosts(items: tp.Union[tp.Sequence[str]]) -> str:
-    if isinstance(items, (list, tuple)):
-        return ','.join(sorted(items))
-    elif isinstance(items, str):
-        return items
-    raise TypeError('Invalid type for items')
 
 
 logger = logging.getLogger(__name__)
@@ -54,19 +47,30 @@ class VolumeDatabase(Monitor):
         vol = self.volumes.pop(vol.name)
         vol.delete()
 
-    @for_argument(None, to_hosts)
     def volume_exists(self, name: str) -> bool:
         return name in self.volumes
 
-    @for_argument(None, to_hosts)
     def get_volume(self, name: str,
-                   hosts: tp.Optional[tp.Sequence[str]] = None,
+                   hosts: tp.Optional[str] = None,
                    path: tp.Optional[str] = None,
                    mode: str = 'DIR',
                    auth: tp.Optional[str] = None) -> Volume:
+        """
+        The volume factory function.
+
+        It will either return a currently existing volume or make a new one.
+        However, in order to make a new one you will need to provide extra arguments.
+
+        :param name: volume name
+        :param hosts: only mandatory if the volume does not yet exist
+        :param path: only mandatory if the volume does not yet exist
+        :param mode: only mandatory if the volume does not yet exist
+        :param auth: only mandatory if the volume does not yet exist
+        :return: a Volume instance
+        """
         if name not in self.volumes:
             if hosts is None or path is None:
-                raise KeyError()
+                raise KeyError('The volume is not present and extra data is required to make it')
             vol = Volume(hosts, name, path, mode, auth)
             self.volumes[name] = vol
             return vol
@@ -85,11 +89,11 @@ class VolumeDatabase(Monitor):
 
 
 class Volume(Closeable):
-    def __init__(self, hosts: tp.Sequence[str], name: str, path: str,
+    def __init__(self, hosts: str, name: str, path: str,
                  mode: str = 'DIR', auth: tp.Optional[str] = None):
         super().__init__()
         self.monitor = Monitor()
-        self.hosts = to_hosts(hosts)
+        self.hosts = hosts
         self.name = name
         self._path = path
         self.refcount = 0
@@ -97,14 +101,21 @@ class Volume(Closeable):
         self.process = None
         self.mode = mode
         self.auth = auth
+        self.fds_to_close = []
 
     def mount(self) -> None:
         path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
         commandline = ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', path]
+        kwargs = {'stdout': subprocess.DEVNULL,
+                  'stderr': subprocess.DEVNULL}
         if DEBUG:
             commandline.extend(['-o', 'debug'])
+            self.fds_to_close = [open(f'/log/zookeeper-volume/{self.name}.stdout.txt', 'w'),
+                                 open(f'/log/zookeeper-volume/{self.name}.stderr.txt', 'w')]
+            kwargs.update(stdout=self.fds_to_close[0],
+                          stderr=self.fds_to_close[1])
         commandline.append('--')
         commandline.extend(['--zooHosts', self.hosts, '--zooPath', self._path])
         if self.mode != 'DIR':
@@ -115,8 +126,7 @@ class Volume(Closeable):
             commandline.extend(['--logLevel', 'DEBUG'])
         self.process = subprocess.Popen(commandline, stdin=subprocess.DEVNULL,
                                         preexec_fn=os.setsid,
-                                        stdout=subprocess.DEVNULL,
-                                        stderr=subprocess.DEVNULL)
+                                        **kwargs)
 
         time.sleep(1)
         if not self.alive:
@@ -188,6 +198,9 @@ class Volume(Closeable):
         self.wait(0)
         a = self.process.returncode is None
         if not a:
+            while self.fds_to_close:
+                self.fds_to_close.pop().close()
+
             if self.process.returncode:
                 logger.error('zookeeperfuse terminated with RC of %s', self.process.returncode)
             self.process = None
