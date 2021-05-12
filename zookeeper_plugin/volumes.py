@@ -111,7 +111,7 @@ class Volume(Closeable):
                           stderr=subprocess.STDOUT)
         commandline.append('--')
         commandline.extend(['--zooHosts', self.hosts, '--zooPath', self._path])
-        if self.mode in ('FILE', 'HYBRID'):
+        if self.mode != 'DIR':
             commandline.extend(['--leafMode', self.mode])
         if self.auth:
             commandline.extend(['--zooAuthentication', self.auth])
