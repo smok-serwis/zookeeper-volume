@@ -102,6 +102,7 @@ class Volume(Closeable):
         self.mode = mode
         self.auth = auth
         self.fds_to_close = []
+        self.last_rc_code = None
 
     def mount(self) -> None:
         path = self.path
@@ -132,7 +133,8 @@ class Volume(Closeable):
 
         time.sleep(1)
         if not self.alive:
-            raise MountException('process died shortly after startup')
+            logger.warning('Process died shortly after creation, RC=%s', self.last_rc_code)
+            raise MountException('process died shortly after startup RC=%s' % (self.last_rc_code, ))
 
     @silence_excs(subprocess.TimeoutExpired)
     def wait(self, timeout=1):
@@ -205,6 +207,7 @@ class Volume(Closeable):
 
             if self.process.returncode:
                 logger.error('zookeeperfuse terminated with RC of %s', self.process.returncode)
+            self.last_rc_code = self.process.returncode
             self.process = None
         return a
 
