@@ -46,7 +46,7 @@
       "Type": "bind"
     },
     {
-      "Destination": "/logs",
+      "Destination": "/log",
       "Options": [
         "rbind"
       ],
