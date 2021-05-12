@@ -13,7 +13,33 @@ docker plugin install smokserwis/zookeeper-volume
 docker plugin enable smokserwis/zookeeper-volume
 ```
 
-# Defining volumes
+Note that if you keep your Docker root in other place than
+`/var/lib/docker`, best install from source, before which 
+change the path in `config.json`
+
+## Building from source
+
+Just check this repo out on a normal UNIX platform (sorry, only UNIXes supported for the time being)
+and invoke `build.sh`.
+`build.sh` will automatically install and enable the plugin.
+
+If you set the env `DEBUG` during `build.sh`'s run,
+debugging mode will be enabled on the plugin. You can later change it.
+
+## Debugging
+
+To enable debug logs just type:
+
+```bash
+docker plugin set smokserwis/zookeeper-volume DEBUG=1
+```
+
+They will be dumped at `/var/log/daemon.log` or the usual place where your Docker drops it's logs.
+Note that setting the env `DEBUG` during a run of `build.sh` will
+automatically set the variable to 1.
+The variable is kept at default 0 in `config.json`.
+
+# Usage
 
 To define a volume just type
 
@@ -30,7 +56,7 @@ docker volume create -d smokserwis/zookeeper-volume -ohosts=192.168.2.237:2181,1
 
 Note that it's mandatory to provide a port number.
 
-# Creating volumes
+## Creating volumes
 
 Volume must have at least a single option:
 
@@ -40,25 +66,11 @@ Volume must have at least a single option:
 Other options can be optionally given:
 
 * `path`: zookeeper path to mount as root
-* `mode`: [zookeeper-fuse](https://github.com/borowskk/zookeeper-fuse/blob/master/README) access mode 
-    (default is DIR)
+* `mode`: [zookeeper-fuse](https://github.com/smok-serwis/zookeeper-fuse/blob/master/README) access mode 
+    (default is DIR), HYBRID is recommended for best impersonation of a filesystem
+    due to how zookeeper's filesystem behaves. Read the appropriate [README](https://github.com/smok-serwis/zookeeper-fuse/blob/master/README)
+    to figure out how exactly HYBRID works.
 * `auth`: zookeeper authentication string (by default none given)
-
-# Debugging
-
-To enable debug logs just type:
-
-```bash
-docker plugin set smokserwis/zookeeper-volume DEBUG=1
-```
-
-They will be dumped at `/var/log/daemon.log` or the usual place where your Docker drops it's logs.
-
-# Building from source
-
-Just check this repo out on a normal UNIX platform (sorry, only UNIXes supported for the time being)
-and invoke `build.sh`.
-`build.sh` will automatically install and enable the plugin.
 
 # Thanks and credits
 

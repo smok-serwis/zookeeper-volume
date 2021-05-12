@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x    # Show every command executed
+set -e    # Stop on error
 
 if [ -d "rootfs" ]; then
     rm -rf rootfs
@@ -9,7 +11,11 @@ ID=$(docker create smokserwis/zookeeper-volume true)
 mkdir rootfs
 docker export $ID | tar -x -C rootfs/ && docker plugin create smokserwis/zookeeper-volume .
 docker rm $ID
-docker plugin set smokserwis/zookeeper-volume DEBUG=1
+
+if [[ ! -v DEBUG ]]; then
+  echo "Enabling debugging mode"
+  docker plugin set smokserwis/zookeeper-volume DEBUG=1
+fi
+
 docker plugin enable smokserwis/zookeeper-volume
-#docker plugin push smokserwis/zookeeper-volume
 
