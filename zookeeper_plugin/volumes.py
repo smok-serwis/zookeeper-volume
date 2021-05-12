@@ -13,7 +13,7 @@ from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
 
 from .exceptions import MountException
-
+from .app import DEBUG
 
 def to_hosts(items: tp.Union[tp.Sequence[str]]) -> str:
     if isinstance(items, (list, tuple)):
@@ -102,16 +102,24 @@ class Volume(Closeable):
         path = self.path
         if not os.path.exists(path):
             os.mkdir(path)
-        commandline = ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', path, '--',
-                       '--zooHosts', self.hosts, '--zooPath', self._path]
-        if self.mode == 'FILE':
+        commandline = ['/usr/bin/zookeeperfuse', '-o', 'auto_unmount', '-f', path]
+        kwargs = {'stdout': subprocess.DEVNULL,
+                  'stderr': subprocess.DEVNULL}
+        if DEBUG:
+            commandline.extend(['-o', 'debug'])
+            kwargs.update(stdout=subprocess.STDOUT,
+                          stderr=subprocess.STDOUT)
+        commandline.append('--')
+        commandline.extend(['--zooHosts', self.hosts, '--zooPath', self._path])
+        if self.mode in ('FILE', 'HYBRID'):
             commandline.extend(['--leafMode', self.mode])
         if self.auth:
             commandline.extend(['--zooAuthentication', self.auth])
+        if DEBUG:
+            commandline.extend(['--logLevel', 'DEBUG'])
         self.process = subprocess.Popen(commandline, stdin=subprocess.DEVNULL,
-                                        stdout=subprocess.DEVNULL,
-                                        stderr=subprocess.DEVNULL,
-                                        preexec_fn=os.setsid)
+                                        preexec_fn=os.setsid,
+                                        **kwargs)
 
         time.sleep(1)
         if not self.alive:

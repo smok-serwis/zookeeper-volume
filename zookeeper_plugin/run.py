@@ -1,14 +1,13 @@
 import logging
-import os
 
-from .app import app
+from .app import app, DEBUG
 from . import __version__
 import zookeeper_plugin.handlers
 import zookeeper_plugin.exceptions
 
-if os.environ.get('DEBUG', '0') == '0':
-    logging.basicConfig(level=logging.INFO)
-else:
-    logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
 
 logging.getLogger(__name__).warning('smokserwis/zookeeper-volume v%s starting', __version__)
+
+__all__ = ['app']
+
