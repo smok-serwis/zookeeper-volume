@@ -131,9 +131,11 @@ class Volume(Closeable):
                                         preexec_fn=os.setsid,
                                         **kwargs)
 
-        time.sleep(1)
+        time.sleep(2)
         if not self.alive:
-            logger.warning('Process died shortly after creation, RC=%s', self.last_rc_code)
+            logger.error('Process died shortly after creation, RC=%s, '
+                         'subprocess.Popen was called with (%s, stdin=DEVNULL, '
+                         'preexec_fn=os.setsid, %s)', self.last_rc_code, commandline, kwargs)
             raise MountException('process died shortly after startup RC=%s' % (self.last_rc_code, ))
 
     @silence_excs(subprocess.TimeoutExpired)
