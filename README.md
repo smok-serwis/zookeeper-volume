@@ -88,6 +88,12 @@ Since zookeeper-fuse's default access modes of DIR and FILE do not permit to use
 
 Note however that cache invalidation is not yet supported, so if you process files with new names you are going to run into trouble. If you however keep on processing the same files, you should be OK.
 
+What hybrid mode supports:
+
+* files once created as files stay files. Directories created as directories start as directories. Note that this however applies to a single machine only, so if you create an empty file on one machine it's going to be seen as a directory on another.
+* Symlinks are supported. However, in HYBRID mode `__symlinks__` is an invalid file name, since this is the file in which symlink information is stored at the root.
+* `cp` is supported, `mv` is not.
+
 # Changelog
 
 # v1.1 
