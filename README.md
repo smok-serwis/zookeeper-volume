@@ -99,11 +99,16 @@ Please note that the default mode in which
 *smokserwis/zookeeper-volume* mounts volumes is
 `HYBRID` not `DIR` or `FILE`.
 
+In HYBRID mode syscalls `lock` and `flock` are mapped to no-ops. They
+will create a file for all it's worth.
+
 # Changelog
 
 # v1.2
 
-* _TBA_
+* support for `lock`, `flock`, `release`, 
+  `releasedir` and `access` added
+* the filesystem is enough for certbot to put it's certificates onto this
 
 # v1.1 
 
