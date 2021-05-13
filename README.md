@@ -75,9 +75,9 @@ Other options can be optionally given:
 
 * `path`: zookeeper path to mount as root
 * `mode`: [zookeeper-fuse](https://github.com/smok-serwis/zookeeper-fuse/blob/master/README) access mode 
-    (default is DIR), HYBRID is recommended for best impersonation of a filesystem
+    (default is HYBRID), HYBRID is recommended for best impersonation of a filesystem
     due to how zookeeper's filesystem behaves. Read the appropriate [README](https://github.com/smok-serwis/zookeeper-fuse/blob/master/README)
-    to figure out how exactly HYBRID works.
+    to figure out how exactly HYBRID works. You can alternatively choose `DIR` or `FILE`.
 * `auth`: zookeeper authentication string (by default none given)
 
 # Thanks and credits
@@ -97,8 +97,13 @@ What hybrid mode supports:
 * Symlinks are supported. However, in HYBRID mode `__symlinks__` is an invalid file name, since this is the file in which symlink information is stored at the root.
 * `cp` is supported, `mv` is not.
 
+Please note that the default mode in which 
+*smokserwis/zookeeper-volume* mounts volumes is
+`HYBRID` not `DIR` or `FILE`.
+
 # Changelog
 
 # v1.1 
 
 * HYBRID mode is fully supported
+* default moe in which a volume is mounted switched to `HYBRID` instead of `DIR`

@@ -53,7 +53,7 @@ class VolumeDatabase(Monitor):
     def get_volume(self, name: str,
                    hosts: tp.Optional[str] = None,
                    path: tp.Optional[str] = None,
-                   mode: str = 'DIR',
+                   mode: str = 'HYBRID',
                    auth: tp.Optional[str] = None) -> Volume:
         """
         The volume factory function.
