@@ -3,8 +3,6 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/a60480b7e2fe114fd794/maintainability)](https://codeclimate.com/github/smok-serwis/zookeeper-volume/maintainability)
 [![source at github](https://img.shields.io/badge/github-available-green)](https://github.com/smok-serwis/zookeeper-volume)
 
-Source
-
 A Docker volume as a ZooKeeper tree volume plugin
 
 # Installation
@@ -102,6 +100,10 @@ Please note that the default mode in which
 `HYBRID` not `DIR` or `FILE`.
 
 # Changelog
+
+# v1.2
+
+* _TBA_
 
 # v1.1 
 
