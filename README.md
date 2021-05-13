@@ -16,10 +16,10 @@ docker plugin enable smokserwis/zookeeper-volume
 
 Note that if you keep your Docker root in other place than
 `/var/lib/docker`, best install from source, before which 
-change the path in `config.json`
+change the path in `config.json`, or alternatively symlink this location to your target.
 
 If you logs are stored somewhere else than `/var/log`, you best
-do it too.
+do it too. Or symlink, it's your choice.
 
 ## Building from source
 
@@ -103,6 +103,10 @@ In HYBRID mode syscalls `lock` and `flock` are mapped to no-ops. They
 will create a file for all it's worth.
 
 # Changelog
+
+# v1.3
+
+* _TBA_
 
 # v1.2
 
