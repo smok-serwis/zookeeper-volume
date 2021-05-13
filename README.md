@@ -1,5 +1,5 @@
 # smokserwis/zookeeper-volume
-[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.0-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
+[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.1-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a60480b7e2fe114fd794/maintainability)](https://codeclimate.com/github/smok-serwis/zookeeper-volume/maintainability)
 
 A Docker volume as a ZooKeeper tree volume plugin
@@ -81,6 +81,12 @@ Other options can be optionally given:
 
 Special thanks to [borowskk's zookeeper-fuse](https://github.com/borowskk/zookeeper-fuse.git), 
 without which this plugin wouldn't happen to exist.
+
+## HYBRID mode
+
+Since zookeeper-fuse's default access modes of DIR and FILE do not permit to use ZooKeeper systems as a valid filesystem (ie. once you create a file it becomes a directory) and does not support symlinks I have extended [zookeeper-fuse](https://github.com/smok-serwis/zookeeper-fuse.git) to add symlink support and if you create a file it stays a file. Basically it remembers what you have done while creating that file. I've also filed a [pull request](https://github.com/borowskk/zookeeper-fuse/pull/5).
+
+Note however that cache invalidation is not yet supported, so if you process files with new names you are going to run into trouble. If you however keep on processing the same files, you should be OK.
 
 # Changelog
 
