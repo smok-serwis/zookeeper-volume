@@ -107,6 +107,8 @@ will create a file for all it's worth.
 # v1.3
 
 * Maximum file size increased to 128 kB
+* fixed a bug wherein directories would
+  be listed as files
 
 # v1.2
 
