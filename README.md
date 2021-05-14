@@ -106,7 +106,7 @@ will create a file for all it's worth.
 
 # v1.3
 
-* _TBA_
+* Maximum file size increased to 128 kB
 
 # v1.2
 
