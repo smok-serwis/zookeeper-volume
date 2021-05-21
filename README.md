@@ -104,6 +104,10 @@ will create a file for all it's worth.
 
 It works much better if you `ls -R` the entire mounted directory prior to using files from there.
 
+Keep in mind that the maximum file size is limited by
+[zookeeper-fuse](https://github.com/smok-serwis/zookeeper-fuse.git) 
+and is currently set to 128 kB.
+
 # Changelog
 
 # v1.3
