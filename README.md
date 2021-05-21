@@ -102,6 +102,8 @@ Please note that the default mode in which
 In HYBRID mode syscalls `lock` and `flock` are mapped to no-ops. They
 will create a file for all it's worth.
 
+It works much better if you `ls -R` the entire mounted directory prior to using files from there.
+
 # Changelog
 
 # v1.3
