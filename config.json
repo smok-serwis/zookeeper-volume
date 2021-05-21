@@ -32,9 +32,6 @@
       }
     ]
   },
-  "Network": {
-    "Type": "host"
-  },
   "Mounts": [
     {
       "Destination": "/state",

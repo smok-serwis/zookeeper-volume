@@ -14,7 +14,7 @@ FROM python:3.8 AS runtime
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libzookeeper-mt2 fuse libfuse2 \
-                                               libboost-filesystem1.67.0 && \
+                                               libboost-filesystem1.67.0 libbsd0 && \
     apt-get clean
 
 ADD requirements.txt /tmp/requirements.txt
