@@ -110,6 +110,10 @@ and is currently set to 128 kB.
 
 # Changelog
 
+# v1.5
+
+* _TBA_
+
 # v1.4
 
 * fixed a bug related with writing symlink name to too short a buffer
