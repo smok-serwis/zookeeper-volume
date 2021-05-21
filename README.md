@@ -113,7 +113,6 @@ and is currently set to 128 kB.
 # v1.4
 
 * fixed a bug related with writing symlink name to too short a buffer
-* removed network host from requirements
 
 # v1.3
 
