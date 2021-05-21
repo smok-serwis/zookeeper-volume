@@ -124,7 +124,7 @@ class Volume(Closeable):
         if self.auth:
             commandline.extend(['--zooAuthentication', self.auth])
         if DEBUG:
-            commandline.extend(['--logLevel', 'DEBUG'])
+            commandline.extend(['--logLevel', 'TRACE'])
         logger.debug('calling subprocess.Popen(%s, stdin=DEVNULL, preexec_fn=os.setsid, %s)',
                      commandline, kwargs)
         self.process = subprocess.Popen(commandline, stdin=subprocess.DEVNULL,

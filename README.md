@@ -114,6 +114,7 @@ and is currently set to 128 kB.
 
 * fixed a bug related with writing symlink name to too short a buffer
 * fixed a bug wherein a filesystem required as ls -R /mount/zoo to load all symlinks
+* fixed a bug wherein enabling DEBUG mode would not result in DEBUG-level printfs from zookeeper-fuse
 
 # v1.3
 
