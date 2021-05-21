@@ -1,7 +1,7 @@
 FROM python:3.8 AS builder
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libboost-filesystem-dev libfuse-dev libzookeeper-mt-dev
+    apt-get install -y --no-install-recommends libboost-filesystem-dev libfuse-dev libzookeeper-mt-dev libbsd-dev
 
 RUN git clone https://github.com/smok-serwis/zookeeper-fuse.git
 
