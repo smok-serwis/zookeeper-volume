@@ -7,7 +7,8 @@ RUN apt-get update && \
 RUN git clone https://github.com/smok-serwis/zookeeper-fuse.git
 
 WORKDIR /zookeeper-fuse
-RUN autoreconf -fi && \
+RUN git checkout feature/limited-rename && \
+    autoreconf -fi && \
     ./configure && \
     make -j4
 
