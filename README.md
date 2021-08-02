@@ -1,5 +1,5 @@
 # smokserwis/zookeeper-volume
-[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.4-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
+[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.5-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a60480b7e2fe114fd794/maintainability)](https://codeclimate.com/github/smok-serwis/zookeeper-volume/maintainability)
 [![source at github](https://img.shields.io/badge/github-available-green)](https://github.com/smok-serwis/zookeeper-volume)
 
@@ -114,7 +114,7 @@ and is currently set to 128 kB.
 
 # v1.5
 
-* _TBA_
+* added support for `mv`-ing files
 
 # v1.4
 
