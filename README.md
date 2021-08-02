@@ -93,7 +93,9 @@ What hybrid mode supports:
 
 * files once created as files stay files. Directories created as directories start as directories. Note that this however applies to a single machine only, so if you create an empty file on one machine it's going to be seen as a directory on another.
 * Symlinks are supported. However, in HYBRID mode `__symlinks__` is an invalid file name, since this is the file in which symlink information is stored at the root.
-* `cp` is supported, `mv` is not.
+* `cp` is supported
+* `mv` is supported for files only. Moving files to a
+    non existing location will result in plugin segfaulting.
 
 Please note that the default mode in which 
 *smokserwis/zookeeper-volume* mounts volumes is
