@@ -1,5 +1,5 @@
 # smokserwis/zookeeper-volume
-[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.5-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
+[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.6-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a60480b7e2fe114fd794/maintainability)](https://codeclimate.com/github/smok-serwis/zookeeper-volume/maintainability)
 [![source at github](https://img.shields.io/badge/github-available-green)](https://github.com/smok-serwis/zookeeper-volume)
 
@@ -94,8 +94,7 @@ What hybrid mode supports:
 * files once created as files stay files. Directories created as directories start as directories. Note that this however applies to a single machine only, so if you create an empty file on one machine it's going to be seen as a directory on another.
 * Symlinks are supported. However, in HYBRID mode `__symlinks__` is an invalid file name, since this is the file in which symlink information is stored at the root.
 * `cp` is supported
-* `mv` is supported for files only. Moving files to a
-    non existing location will result in plugin segfaulting.
+* `mv` is supported for files only. Moving a directory is a ENOSYS.
 
 Please note that the default mode in which 
 *smokserwis/zookeeper-volume* mounts volumes is
@@ -111,6 +110,10 @@ Keep in mind that the maximum file size is limited by
 and is currently set to 128 kB.
 
 # Changelog
+
+# v1.6
+
+* the solution should segfault far less
 
 # v1.5
 
