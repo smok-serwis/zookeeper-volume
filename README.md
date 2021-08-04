@@ -111,6 +111,11 @@ and is currently set to 128 kB.
 
 # Changelog
 
+# Pending
+
+* dropped ujson requirements
+* refactored the code
+
 # v1.6
 
 * the solution should segfault far less

@@ -10,4 +10,3 @@ logging.basicConfig(level=logging.DEBUG if DEBUG else logging.INFO)
 logging.getLogger(__name__).warning('smokserwis/zookeeper-volume v%s starting', __version__)
 
 __all__ = ['app']
-

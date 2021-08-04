@@ -37,4 +37,3 @@ def handle_type_errors(e):
 def handle_exceptions(e):
     logger.debug('Exception: %s', e, exc_info=Traceback().pretty_print())
     return {'Err': str(e)}, 500
-

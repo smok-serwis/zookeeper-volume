@@ -1,12 +1,14 @@
 import logging
 
+from flask import request
+
 from .app import app
-from .json import get_json, as_json
+from .json import as_json
 from .volumes import VolumeDatabase
 from .exceptions import MountException
 
-
 logger = logging.getLogger(__name__)
+zdb = VolumeDatabase()
 
 
 @app.route('/Plugin.Activate', methods=['POST'])
@@ -20,7 +22,7 @@ def activate():
 @app.route('/VolumeDriver.Create', methods=['POST'])
 @as_json
 def volume_create():
-    data = get_json()
+    data = request.get_json()
     logger.debug('VolumeDriver.Create(%s)', data)
     name = data['Name']
     options = data.get('Opts', {})
@@ -30,7 +32,7 @@ def volume_create():
         return {'Err': 'expected host or hosts in options'}, 400
 
     path = options.get('path', '/')
-    zdb = VolumeDatabase()
+
     if zdb.volume_exists(name):
         return {'Err': 'volume already exists'}, 409
     vol = zdb.get_volume(name, hosts, path, options.get('mode', 'HYBRID'),
@@ -43,11 +45,11 @@ def volume_create():
 @app.route('/VolumeDriver.Remove', methods=['POST'])
 @as_json
 def volume_remove():
-    data = get_json()
+    data = request.get_json()
     logger.debug('VolumeDriver.Remove(%s)', data)
 
     name = data['Name']
-    zdb = VolumeDatabase()
+
     try:
         vol = zdb.get_volume(name)
     except KeyError:
@@ -60,10 +62,10 @@ def volume_remove():
 @app.route('/VolumeDriver.Mount', methods=['POST'])
 @as_json
 def volume_mount():
-    data = get_json()
+    data = request.get_json()
     logger.debug('VolumeDriver.Mount(%s)', data)
     name = data['Name']
-    zdb = VolumeDatabase()
+
     try:
         vol = zdb.get_volume(name)
     except KeyError:
@@ -81,10 +83,10 @@ def volume_mount():
 @app.route('/VolumeDriver.Unmount', methods=['POST'])
 @as_json
 def volume_unmount():
-    data = get_json()
+    data = request.get_json()
     logger.debug('VolumeDriver.Unmount(%s)', data)
     name = data['Name']
-    zdb = VolumeDatabase()
+
     try:
         vol = zdb.get_volume(name)
     except KeyError:
@@ -103,7 +105,7 @@ def volume_unmount():
 def volumes_list():
     result = []
     logger.debug('VolumeDriver.List()')
-    zdb = VolumeDatabase()
+
     for volume in zdb.get_all_volumes():
         result.append({'Name': volume.name,
                        'Mountpoint': volume.path})
@@ -114,10 +116,10 @@ def volumes_list():
 @app.route('/VolumeDriver.Path', methods=['POST'])
 @as_json
 def volume_path():
-    data = get_json()
+    data = request.get_json()
     logger.debug('VolumeDriver.Path(%s)', data)
     name = data['Name']
-    zdb = VolumeDatabase()
+
     try:
         vol = zdb.get_volume(name)
     except KeyError:
@@ -131,10 +133,10 @@ def volume_path():
 @app.route('/VolumeDriver.Get', methods=['POST'])
 @as_json
 def volume_get():
-    data = get_json()
+    data = request.get_json()
     logger.debug('VolumeDriver.Get(%s)', data)
     name = data['Name']
-    zdb = VolumeDatabase()
+
     try:
         vol = zdb.get_volume(name)
     except KeyError:

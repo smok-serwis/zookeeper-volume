@@ -9,12 +9,10 @@ import typing as tp
 
 from satella.coding import Closeable, Monitor, silence_excs
 from satella.coding.concurrent import IDAllocator
-from satella.coding.structures import Singleton
 from satella.json import write_json_to_file, read_json_from_file
 
 from .exceptions import MountException
 from .app import DEBUG
-
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +21,6 @@ BASE_PATH = '/mnt/volumes'
 STATE_FILE = '/state/zookeeper-volume-state.json'
 
 
-@Singleton
 class VolumeDatabase(Monitor):
     def __init__(self):
         super().__init__()
@@ -136,7 +133,7 @@ class Volume(Closeable):
             logger.error('Process died shortly after creation, RC=%s, '
                          'subprocess.Popen was called with (%s, stdin=DEVNULL, '
                          'preexec_fn=os.setsid, %s)', self.last_rc_code, commandline, kwargs)
-            raise MountException('process died shortly after startup RC=%s' % (self.last_rc_code, ))
+            raise MountException('process died shortly after startup RC=%s' % (self.last_rc_code,))
 
     @silence_excs(subprocess.TimeoutExpired)
     def wait(self, timeout=1):
