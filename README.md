@@ -111,10 +111,11 @@ and is currently set to 128 kB.
 
 # Changelog
 
-# Pending
+# v1.7
 
 * dropped ujson requirements
 * refactored the code
+* in HYBRID mode the chmod of directories will be 777 instead of 755
 
 # v1.6
 
