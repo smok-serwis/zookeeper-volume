@@ -1,5 +1,5 @@
 # smokserwis/zookeeper-volume
-[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.7-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
+[![docker hub plugin](https://img.shields.io/badge/docker%20hub%20plugin-1.8-green)](https://hub.docker.com/r/smokserwis/zookeeper-volume)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a60480b7e2fe114fd794/maintainability)](https://codeclimate.com/github/smok-serwis/zookeeper-volume/maintainability)
 [![source at github](https://img.shields.io/badge/github-available-green)](https://github.com/smok-serwis/zookeeper-volume)
 
@@ -110,6 +110,10 @@ Keep in mind that the maximum file size is limited by
 and is currently set to 128 kB.
 
 # Changelog
+
+# v1.8
+
+* renaming (moving) empty directories is supported
 
 # v1.7
 
